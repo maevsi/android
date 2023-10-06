@@ -60,7 +60,7 @@ object TwaManifest {
 
 android {
     signingConfigs {
-        if (System.getenv("CI") === "") {
+        if (keystorePropertiesFile.exists()) {
             create("upload") {
                 keyAlias = keystoreProperties.getProperty("uploadKeyAlias")
                 keyPassword = keystoreProperties.getProperty("uploadKeyPassword")
@@ -174,24 +174,27 @@ android {
         }
     }
 
+    val signingConfigDebug = if (keystorePropertiesFile.exists()) {
+        signingConfigs.getByName("debug")
+    } else {
+        null
+    }
+    val signingConfigUpload = if (keystorePropertiesFile.exists()) {
+        signingConfigs.getByName("upload")
+    } else {
+        null
+    }
+
     buildTypes {
         release {
             proguardFiles(
                 getDefaultProguardFile("proguard-android-optimize.txt"), "proguard-rules.pro"
             )
-            signingConfig = if (System.getenv("CI") === "") {
-                signingConfigs.getByName("upload")
-            } else {
-                null
-            }
+            signingConfig = signingConfigUpload
             isMinifyEnabled = true
         }
         debug {
-            signingConfig = if (System.getenv("CI") === "") {
-                signingConfigs.getByName("debug")
-            } else {
-                null
-            }
+            signingConfig = signingConfigDebug
         }
     }
 
@@ -224,10 +227,10 @@ dependencies {
     implementation("androidx.lifecycle:lifecycle-runtime-ktx:2.6.2")
     implementation("androidx.activity:activity-compose:1.8.0")
     implementation(platform("androidx.compose:compose-bom:2023.10.00"))
-    implementation("androidx.compose.ui:ui")
-    implementation("androidx.compose.ui:ui-graphics")
-    implementation("androidx.compose.ui:ui-tooling-preview")
-    implementation("androidx.compose.material3:material3")
+    implementation("androidx.compose.ui:ui:1.5.3")
+    implementation("androidx.compose.ui:ui-graphics:1.5.3")
+    implementation("androidx.compose.ui:ui-tooling-preview:1.5.3")
+    implementation("androidx.compose.material3:material3:1.1.2")
 //    implementation 'com.google.androidbrowserhelper:locationdelegation:1.1.1'
 //    implementation 'com.google.androidbrowserhelper:billing:1.0.0-alpha10'
     implementation("com.google.androidbrowserhelper:androidbrowserhelper:2.5.0")
@@ -235,9 +238,9 @@ dependencies {
     androidTestImplementation("androidx.test.ext:junit:1.1.5")
     androidTestImplementation("androidx.test.espresso:espresso-core:3.5.1")
     androidTestImplementation(platform("androidx.compose:compose-bom:2023.10.00"))
-    androidTestImplementation("androidx.compose.ui:ui-test-junit4")
-    debugImplementation("androidx.compose.ui:ui-tooling")
-    debugImplementation("androidx.compose.ui:ui-test-manifest")
+    androidTestImplementation("androidx.compose.ui:ui-test-junit4:1.5.3")
+    debugImplementation("androidx.compose.ui:ui-tooling:1.5.3")
+    debugImplementation("androidx.compose.ui:ui-test-manifest:1.5.3")
 }
 
 tasks.register("generateShortcutsFile") {
