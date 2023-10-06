@@ -12,7 +12,10 @@ plugins {
 
 val keystorePropertiesFile: File = rootProject.file("keystore.properties")
 val keystoreProperties = Properties()
-keystoreProperties.load(FileInputStream(keystorePropertiesFile))
+
+if (keystorePropertiesFile.exists()) {
+    keystoreProperties.load(FileInputStream(keystorePropertiesFile))
+}
 
 interface Shortcut {
     val name: String?
@@ -57,17 +60,19 @@ object TwaManifest {
 
 android {
     signingConfigs {
-        create("upload") {
-            keyAlias = keystoreProperties.getProperty("uploadKeyAlias")
-            keyPassword = keystoreProperties.getProperty("uploadKeyPassword")
-            storeFile = file(keystoreProperties.getProperty("uploadStoreFile"))
-            storePassword = keystoreProperties.getProperty("uploadStorePassword")
-        }
-        getByName("debug") {
-            keyAlias = keystoreProperties.getProperty("debugKeyAlias")
-            keyPassword = keystoreProperties.getProperty("debugKeyPassword")
-            storeFile = file(keystoreProperties.getProperty("debugStoreFile"))
-            storePassword = keystoreProperties.getProperty("debugStorePassword")
+        if (System.getenv("CI") === "") {
+            create("upload") {
+                keyAlias = keystoreProperties.getProperty("uploadKeyAlias")
+                keyPassword = keystoreProperties.getProperty("uploadKeyPassword")
+                storeFile = file(keystoreProperties.getProperty("uploadStoreFile"))
+                storePassword = keystoreProperties.getProperty("uploadStorePassword")
+            }
+            getByName("debug") {
+                keyAlias = keystoreProperties.getProperty("debugKeyAlias")
+                keyPassword = keystoreProperties.getProperty("debugKeyPassword")
+                storeFile = file(keystoreProperties.getProperty("debugStoreFile"))
+                storePassword = keystoreProperties.getProperty("debugStorePassword")
+            }
         }
     }
 
@@ -162,7 +167,6 @@ android {
         resValue("bool", "enableSiteSettingsShortcut", TwaManifest.enableSiteSettingsShortcut)
         resValue("string", "orientation", TwaManifest.orientation)
 
-        signingConfig = signingConfigs.getByName("upload")
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
 
         vectorDrawables {
@@ -173,14 +177,21 @@ android {
     buildTypes {
         release {
             proguardFiles(
-                getDefaultProguardFile("proguard-android-optimize.txt"),
-                "proguard-rules.pro"
+                getDefaultProguardFile("proguard-android-optimize.txt"), "proguard-rules.pro"
             )
-            signingConfig = signingConfigs.getByName("upload")
+            signingConfig = if (System.getenv("CI") === "") {
+                signingConfigs.getByName("upload")
+            } else {
+                null
+            }
             isMinifyEnabled = true
         }
         debug {
-            signingConfig = signingConfigs.getByName("debug")
+            signingConfig = if (System.getenv("CI") === "") {
+                signingConfigs.getByName("debug")
+            } else {
+                null
+            }
         }
     }
 
