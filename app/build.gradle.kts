@@ -60,7 +60,7 @@ object TwaManifest {
 
 android {
     signingConfigs {
-        if (System.getenv("CI") === "") {
+        if (keystorePropertiesFile.exists()) {
             create("upload") {
                 keyAlias = keystoreProperties.getProperty("uploadKeyAlias")
                 keyPassword = keystoreProperties.getProperty("uploadKeyPassword")
@@ -174,24 +174,27 @@ android {
         }
     }
 
+    val signingConfigDebug = if (keystorePropertiesFile.exists()) {
+        signingConfigs.getByName("debug")
+    } else {
+        null
+    }
+    val signingConfigUpload = if (keystorePropertiesFile.exists()) {
+        signingConfigs.getByName("upload")
+    } else {
+        null
+    }
+
     buildTypes {
         release {
             proguardFiles(
                 getDefaultProguardFile("proguard-android-optimize.txt"), "proguard-rules.pro"
             )
-            signingConfig = if (System.getenv("CI") === "") {
-                signingConfigs.getByName("upload")
-            } else {
-                null
-            }
+            signingConfig = signingConfigUpload
             isMinifyEnabled = true
         }
         debug {
-            signingConfig = if (System.getenv("CI") === "") {
-                signingConfigs.getByName("debug")
-            } else {
-                null
-            }
+            signingConfig = signingConfigDebug
         }
     }
 
