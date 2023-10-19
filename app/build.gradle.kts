@@ -229,7 +229,7 @@ dependencies {
     implementation(platform("androidx.compose:compose-bom:2023.10.00"))
     implementation("androidx.compose.ui:ui:1.5.4")
     implementation("androidx.compose.ui:ui-graphics:1.5.4")
-    implementation("androidx.compose.ui:ui-tooling-preview:1.5.3")
+    implementation("androidx.compose.ui:ui-tooling-preview:1.5.4")
     implementation("androidx.compose.material3:material3:1.1.2")
 //    implementation 'com.google.androidbrowserhelper:locationdelegation:1.1.1'
 //    implementation 'com.google.androidbrowserhelper:billing:1.0.0-alpha10'
