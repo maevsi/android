@@ -240,7 +240,7 @@ dependencies {
     androidTestImplementation(platform("androidx.compose:compose-bom:2024.01.00"))
     androidTestImplementation("androidx.compose.ui:ui-test-junit4:1.6.0")
     debugImplementation("androidx.compose.ui:ui-tooling:1.5.4")
-    debugImplementation("androidx.compose.ui:ui-test-manifest:1.5.4")
+    debugImplementation("androidx.compose.ui:ui-test-manifest:1.6.0")
 }
 
 tasks.register("generateShortcutsFile") {
