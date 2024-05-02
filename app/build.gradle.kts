@@ -26,8 +26,9 @@ interface Shortcut {
 
 object TwaManifest {
     const val applicationId = "si.maev.twa"
+    const val protocol = "https://"
     const val hostName = "maev.si" // The domain being opened in the TWA.
-    const val launchUrl =
+    const val launchPath =
         "/?source=pwa" // The start path for the TWA. Must be relative to the domain.
     const val name = "maevsi" // The application name.
     const val launcherName = "maevsi" // The name shown on the Android Launcher.
@@ -93,16 +94,20 @@ android {
         resValue("string", "launcherName", TwaManifest.launcherName)
 
         // The URL that will be used when launching the TWA from the Android Launcher
-        val launchUrl = "https://" + TwaManifest.hostName + TwaManifest.launchUrl
+        val launchUrl = TwaManifest.protocol + TwaManifest.hostName + TwaManifest.launchPath
         resValue("string", "launchUrl", launchUrl)
 
         // The URL the Web Manifest for the Progressive Web App that the TWA points to. This
         // is used by Chrome OS and Meta Quest to open the Web version of the PWA instead of
         // the TWA, as it will probably give a better user experience for non-mobile devices.
-        resValue("string", "webManifestUrl", "https://maev.si/manifest.webmanifest")
+        resValue(
+            "string",
+            "webManifestUrl",
+            TwaManifest.protocol + TwaManifest.hostName + "/manifest.webmanifest"
+        )
 
         // This is used by Meta Quest.
-        resValue("string", "fullScopeUrl", "https://maev.si/")
+        resValue("string", "fullScopeUrl", TwaManifest.protocol + TwaManifest.hostName + "/")
 
         // The hostname is used when building the intent-filter, so the TWA is able to
         // handle Intents to open host url of the application.
