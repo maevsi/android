@@ -55,7 +55,7 @@ object TwaManifest {
     // "customtabs" and "webview".
     const val fallbackType = "customtabs"
     const val enableSiteSettingsShortcut = "true"
-    const val orientation = "any"
+    // const val orientation = "any" // Disabled to respect system's rotation setting
 }
 
 android {
@@ -165,7 +165,7 @@ android {
         resValue("string", "generatorApp", TwaManifest.generatorApp)
         resValue("string", "fallbackType", TwaManifest.fallbackType)
         resValue("bool", "enableSiteSettingsShortcut", TwaManifest.enableSiteSettingsShortcut)
-        resValue("string", "orientation", TwaManifest.orientation)
+        // resValue("string", "orientation", TwaManifest.orientation) // Disabled to respect system's rotation setting
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
 

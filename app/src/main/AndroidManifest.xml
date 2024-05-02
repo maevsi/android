@@ -117,9 +117,11 @@
                 android:name="android.support.customtabs.trusted.FALLBACK_STRATEGY"
                 android:value="@string/fallbackType" />
 
+            <!-- Disabled to respect system's rotation setting
             <meta-data
                 android:name="android.support.customtabs.trusted.SCREEN_ORIENTATION"
                 android:value="@string/orientation" />
+            -->
 
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
