@@ -275,6 +275,11 @@ public class TwaLauncher {
         }
         Log.d(TAG, "Launching Trusted Web Activity.");
         TrustedWebActivityIntent intent = builder.build(mSession);
+
+        Bundle headers = new Bundle();
+        headers.putString("maevsi-platform", "android");
+        intent.getIntent().putExtra(Browser.EXTRA_HEADERS, headers);
+
         FocusActivity.addToIntent(intent.getIntent(), mContext);
         intent.launchTrustedWebActivity(mContext);
 
