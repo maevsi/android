@@ -12,15 +12,15 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-package com.google.androidbrowserhelper.trusted;
+package si.maev.twa;
 
 import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
 import android.net.Uri;
+import android.os.Bundle;
+import android.provider.Browser;
 import android.util.Log;
-
-import com.google.androidbrowserhelper.trusted.splashscreens.SplashScreenStrategy;
 
 import androidx.annotation.Nullable;
 import androidx.browser.customtabs.CustomTabsCallback;
@@ -34,9 +34,15 @@ import androidx.browser.trusted.Token;
 import androidx.browser.trusted.TokenStore;
 import androidx.browser.trusted.TrustedWebActivityIntent;
 import androidx.browser.trusted.TrustedWebActivityIntentBuilder;
-import androidx.core.content.ContextCompat;
 
+import com.google.androidbrowserhelper.trusted.ChromeLegacyUtils;
 import com.google.androidbrowserhelper.trusted.ChromeOsSupport;
+import com.google.androidbrowserhelper.trusted.FocusActivity;
+import com.google.androidbrowserhelper.trusted.LauncherActivityMetadata;
+import com.google.androidbrowserhelper.trusted.QualityEnforcer;
+import com.google.androidbrowserhelper.trusted.SharedPreferencesTokenStore;
+import com.google.androidbrowserhelper.trusted.TwaProviderPicker;
+import com.google.androidbrowserhelper.trusted.WebViewFallbackActivity;
 import com.google.androidbrowserhelper.trusted.splashscreens.SplashScreenStrategy;
 
 /**
@@ -156,15 +162,15 @@ public class TwaLauncher {
     /**
      * Similar to {@link #launch(Uri)}, but allows more customization.
      *
-     * @param twaBuilder {@link TrustedWebActivityIntentBuilder} containing the url to open, along with
-     * optional parameters: status bar color, additional trusted origins, etc.
-     * @param customTabsCallback {@link CustomTabsCallback} to get messages from the browser, use
-     * for quality enforcement.
+     * @param twaBuilder           {@link TrustedWebActivityIntentBuilder} containing the url to open, along with
+     *                             optional parameters: status bar color, additional trusted origins, etc.
+     * @param customTabsCallback   {@link CustomTabsCallback} to get messages from the browser, use
+     *                             for quality enforcement.
      * @param splashScreenStrategy {@link SplashScreenStrategy} to use for showing splash screens,
-     * null if splash screen not needed.
-     * @param completionCallback Callback triggered when the url has been opened.
-     * @param fallbackStrategy Called when there is no TWA provider available or when launching
-     * the Trusted Web Activity fails.
+     *                             null if splash screen not needed.
+     * @param completionCallback   Callback triggered when the url has been opened.
+     * @param fallbackStrategy     Called when there is no TWA provider available or when launching
+     *                             the Trusted Web Activity fails.
      */
     public void launch(TrustedWebActivityIntentBuilder twaBuilder,
                        CustomTabsCallback customTabsCallback,
@@ -195,13 +201,13 @@ public class TwaLauncher {
      * Similar to {@link #launch(Uri)}, but allows more customization. Uses a Custom Tabs fallback
      * when a TWA provider is not available or when launching a TWA fails.
      *
-     * @param twaBuilder {@link TrustedWebActivityIntentBuilder} containing the url to open, along with
-     * optional parameters: status bar color, additional trusted origins, etc.
-     * @param customTabsCallback {@link CustomTabsCallback} to get messages from the browser, use
-     * for quality enforcement.
+     * @param twaBuilder           {@link TrustedWebActivityIntentBuilder} containing the url to open, along with
+     *                             optional parameters: status bar color, additional trusted origins, etc.
+     * @param customTabsCallback   {@link CustomTabsCallback} to get messages from the browser, use
+     *                             for quality enforcement.
      * @param splashScreenStrategy {@link SplashScreenStrategy} to use for showing splash screens,
-     * null if splash screen not needed.
-     * @param completionCallback Callback triggered when the url has been opened.
+     *                             null if splash screen not needed.
+     * @param completionCallback   Callback triggered when the url has been opened.
      */
     public void launch(TrustedWebActivityIntentBuilder twaBuilder,
                        CustomTabsCallback customTabsCallback,

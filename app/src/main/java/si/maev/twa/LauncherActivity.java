@@ -12,7 +12,7 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-package com.google.androidbrowserhelper.trusted;
+package si.maev.twa;
 
 import android.app.Activity;
 import android.content.Intent;
@@ -34,6 +34,13 @@ import androidx.browser.trusted.sharing.ShareData;
 import androidx.browser.trusted.sharing.ShareTarget;
 import androidx.core.content.ContextCompat;
 
+import com.google.androidbrowserhelper.trusted.ChromeOsSupport;
+import com.google.androidbrowserhelper.trusted.ChromeUpdatePrompt;
+import com.google.androidbrowserhelper.trusted.LauncherActivityMetadata;
+import com.google.androidbrowserhelper.trusted.ManageDataLauncherActivity;
+import com.google.androidbrowserhelper.trusted.QualityEnforcer;
+import com.google.androidbrowserhelper.trusted.SharingUtils;
+import com.google.androidbrowserhelper.trusted.TwaSharedPreferencesManager;
 import com.google.androidbrowserhelper.trusted.splashscreens.PwaWrapperSplashScreenStrategy;
 
 import org.json.JSONException;
@@ -41,38 +48,38 @@ import org.json.JSONException;
 /**
  * A convenience class to make using Trusted Web Activities easier. You can extend this class for
  * basic modifications to the behaviour.
- *
+ * <p>
  * If you just want to wrap a website in a Trusted Web Activity you should:
  * 1) Copy the manifest for the svgomg project.
  * 2) Set up Digital Asset Links [1] for your site and app.
  * 3) Set the DEFAULT_URL metadata in the manifest and the browsable intent filter to point to your
- *    website.
- *
+ * website.
+ * <p>
  * You can skip (2) if you just want to try out TWAs but not on your own website, but you must
  * add the {@code --disable-digital-asset-link-verification-for-url=https://svgomg.firebaseapp.com}
  * to Chrome for this to work [2].
- *
+ * <p>
  * You may also go beyond this and add notification delegation, which causes push notifications to
  * be shown by your app instead of Chrome. This is detailed in the javadoc for
  * {@link TrustedWebActivityService}.
- *
+ * <p>
  * If you just want default behaviour your Trusted Web Activity client app doesn't even need any
  * Java code - you just set everything up in the Android Manifest!
- *
+ * <p>
  * This activity also supports showing a splash screen while the Trusted Web Activity provider is
  * warming up and is loading the page in Trusted Web Activity. This is supported in Chrome 75+.
- *
+ * <p>
  * Splash screens support in Chrome is based on transferring the splash screen via FileProvider [3].
  * To set up splash screens, you need to:
  * 1) Set up a FileProvider in the Manifest as described in [3]. The file provider paths should be
  * as follows: <paths><files-path path="twa_splash/" name="twa_splash"/></paths>
  * 2) Provide splash-screen related metadata (see descriptions in {@link LauncherActivityMetadata}),
  * including the authority of your FileProvider.
- *
+ * <p>
  * Splash screen is first shown here in LauncherActivity, then seamlessly moved onto the browser.
  * Showing splash screen in the app first is optional, but highly recommended, because on slow
  * devices (e.g. Android Go) it can take seconds to boot up a browser.
- *
+ * <p>
  * Recommended theme for this Activity is:
  * <pre>{@code
  * <style name="LauncherActivityTheme" parent="Theme.AppCompat.NoActionBar">
@@ -83,13 +90,13 @@ import org.json.JSONException;
  *     <item name="android:backgroundDimEnabled">false</item>
  * </style>
  * }</pre>
- *
+ * <p>
  * Note that even with splash screen enabled, it is still recommended to use a transparent theme.
  * That way the Activity can gracefully fall back to being a transparent "trampoline" activity in
  * the following cases:
  * - Splash screens are not supported by the picked browser.
  * - The TWA is already running, and LauncherActivity merely needs to deliver a new Intent to it.
- *
+ * <p>
  * [1] https://developers.google.com/digital-asset-links/v1/getting-started
  * [2] https://www.chromium.org/developers/how-tos/run-chromium-with-flags#TOC-Setting-Flags-for-Chrome-on-Android
  * [3] https://developer.android.com/reference/android/support/v4/content/FileProvider
@@ -102,10 +109,14 @@ public class LauncherActivity extends Activity {
 
     private static final String FALLBACK_TYPE_WEBVIEW = "webview";
 
-    /** We only want to show the update prompt once per instance of this application. */
+    /**
+     * We only want to show the update prompt once per instance of this application.
+     */
     private static boolean sChromeVersionChecked;
 
-    /** See comment in onCreate. */
+    /**
+     * See comment in onCreate.
+     */
     private static int sLauncherActivitiesAlive;
 
     private LauncherActivityMetadata mMetadata;
@@ -343,7 +354,7 @@ public class LauncherActivity extends Activity {
      * implementation checks to see if the Activity was launched with an Intent with data, if so
      * attempt to launch to that URL. If not, read the
      * "android.support.customtabs.trusted.DEFAULT_URL" metadata from the manifest.
-     *
+     * <p>
      * Override this for special handling (such as ignoring or sanitising data from the Intent).
      */
     protected Uri getLaunchingUrl() {
@@ -365,7 +376,7 @@ public class LauncherActivity extends Activity {
      * Returns the fallback strategy to be used if there's no Trusted Web Activity support on the
      * device. By default, used the "android.support.customtabs.trusted.DEFAULT_URL" metadata from
      * the manifest. If the value is not present, it uses a CustomTabs fallback.
-     *
+     * <p>
      * Override this for creating a custom fallback approach, such as launching a different WebView
      * fallback implementation ot starting a native Activity.
      */
@@ -380,7 +391,7 @@ public class LauncherActivity extends Activity {
      * Returns the display mode the TrustedWebWebActivity should be launched with. Defaults to the
      * "android.support.customtabs.trusted.DISPLAY_MODE" metadata from the manifest or the "default"
      * mode if the metadata is not present.
-     *
+     * <p>
      * Override this for starting the Trusted Web Activity with different display mode, with special
      * handling of screen cut-outs, for instance.
      */
@@ -426,3 +437,4 @@ public class LauncherActivity extends Activity {
         return true;
     }
 }
+
