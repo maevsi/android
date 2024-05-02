@@ -31,13 +31,13 @@ object TwaManifest {
         "/?source=pwa" // The start path for the TWA. Must be relative to the domain.
     const val name = "maevsi" // The application name.
     const val launcherName = "maevsi" // The name shown on the Android Launcher.
-    const val themeColor = "#1F2937" // The color used for the status bar.
-    const val themeColorDark = themeColor // The color used for the dark status bar.
+    const val themeColor = "#ffffff" // The color used for the status bar.
+    const val themeColorDark = "#27272a" // The color used for the dark status bar.
     const val navigationColor = themeColor // The color used for the navigation bar.
-    const val navigationColorDark = themeColor // The color used for the dark navbar.
+    const val navigationColorDark = themeColorDark // The color used for the dark navbar.
     const val navigationDividerColor = themeColor // The navbar divider color.
-    const val navigationDividerColorDark = themeColor // The dark navbar divider color.
-    const val backgroundColor = themeColor // The color used for the splash screen background.
+    const val navigationDividerColorDark = themeColorDark // The dark navbar divider color.
+    const val backgroundColor = themeColorDark // The color used for the splash screen background.
     const val enableNotifications = true // Set to true to enable notification delegation.
 
     // Every shortcut must include the following fields:
