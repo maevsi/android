@@ -22,6 +22,7 @@ import android.os.Bundle;
 import android.provider.Browser;
 import android.util.Log;
 
+import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.browser.customtabs.CustomTabsCallback;
 import androidx.browser.customtabs.CustomTabsClient;
@@ -226,11 +227,8 @@ public class TwaLauncher {
             splashScreenStrategy.onTwaLaunchInitiated(mProviderPackage, twaBuilder);
         }
 
-        Runnable onSessionCreatedRunnable = () ->
-                launchWhenSessionEstablished(twaBuilder, splashScreenStrategy, completionCallback);
-
         if (mSession != null) {
-            onSessionCreatedRunnable.run();
+            launchWhenRelationshipValidated(twaBuilder, splashScreenStrategy, completionCallback);
             return;
         }
 
@@ -242,18 +240,19 @@ public class TwaLauncher {
         };
 
         if (mServiceConnection == null) {
-            mServiceConnection = new TwaCustomTabsServiceConnection(customTabsCallback);
+            mServiceConnection = new TwaCustomTabsServiceConnection(customTabsCallback, twaBuilder.getUri());
         }
 
         mServiceConnection.setSessionCreationRunnables(
-                onSessionCreatedRunnable, onSessionCreationFailedRunnable);
+                onSessionCreationFailedRunnable
+        );
         CustomTabsClient.bindCustomTabsServicePreservePriority(
                 mContext, mProviderPackage, mServiceConnection);
     }
 
-    private void launchWhenSessionEstablished(TrustedWebActivityIntentBuilder twaBuilder,
-                                              @Nullable SplashScreenStrategy splashScreenStrategy,
-                                              @Nullable Runnable completionCallback) {
+    public void launchWhenRelationshipValidated(TrustedWebActivityIntentBuilder twaBuilder,
+                                                @Nullable SplashScreenStrategy splashScreenStrategy,
+                                                @Nullable Runnable completionCallback) {
         if (mSession == null) {
             throw new IllegalStateException("mSession is null in launchWhenSessionEstablished");
         }
@@ -311,23 +310,22 @@ public class TwaLauncher {
     }
 
     private class TwaCustomTabsServiceConnection extends CustomTabsServiceConnection {
-        private Runnable mOnSessionCreatedRunnable;
         private Runnable mOnSessionCreationFailedRunnable;
-        private CustomTabsCallback mCustomTabsCallback;
+        private final CustomTabsCallback mCustomTabsCallback;
+        private final Uri mLaunchUri;
 
-        TwaCustomTabsServiceConnection(CustomTabsCallback callback) {
+        TwaCustomTabsServiceConnection(CustomTabsCallback callback, Uri launchUri) {
             mCustomTabsCallback = callback;
+            mLaunchUri = launchUri;
         }
 
-        private void setSessionCreationRunnables(@Nullable Runnable onSuccess,
-                                                 @Nullable Runnable onFailure) {
-            mOnSessionCreatedRunnable = onSuccess;
+        private void setSessionCreationRunnables(@Nullable Runnable onFailure) {
             mOnSessionCreationFailedRunnable = onFailure;
         }
 
         @Override
-        public void onCustomTabsServiceConnected(ComponentName componentName,
-                                                 CustomTabsClient client) {
+        public void onCustomTabsServiceConnected(@NonNull ComponentName componentName,
+                                                 @NonNull CustomTabsClient client) {
             if (!ChromeLegacyUtils
                     .supportsLaunchWithoutWarmup(mContext.getPackageManager(), mProviderPackage)) {
                 client.warmup(0);
@@ -336,9 +334,10 @@ public class TwaLauncher {
             try {
                 mSession = client.newSession(mCustomTabsCallback, mSessionId);
 
-                if (mSession != null && mOnSessionCreatedRunnable != null) {
-                    mOnSessionCreatedRunnable.run();
-                } else if (mSession == null && mOnSessionCreationFailedRunnable != null) {
+                if (mSession != null) {
+                    mSession.validateRelationship(CustomTabsService.RELATION_USE_AS_ORIGIN,
+                            mLaunchUri, null);
+                } else if (mOnSessionCreationFailedRunnable != null) {
                     mOnSessionCreationFailedRunnable.run();
                 }
             } catch (RuntimeException e) {
@@ -346,7 +345,6 @@ public class TwaLauncher {
                 mOnSessionCreationFailedRunnable.run();
             }
 
-            mOnSessionCreatedRunnable = null;
             mOnSessionCreationFailedRunnable = null;
         }
 

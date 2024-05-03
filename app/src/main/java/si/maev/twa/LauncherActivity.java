@@ -38,7 +38,6 @@ import com.google.androidbrowserhelper.trusted.ChromeOsSupport;
 import com.google.androidbrowserhelper.trusted.ChromeUpdatePrompt;
 import com.google.androidbrowserhelper.trusted.LauncherActivityMetadata;
 import com.google.androidbrowserhelper.trusted.ManageDataLauncherActivity;
-import com.google.androidbrowserhelper.trusted.QualityEnforcer;
 import com.google.androidbrowserhelper.trusted.SharingUtils;
 import com.google.androidbrowserhelper.trusted.TwaSharedPreferencesManager;
 import com.google.androidbrowserhelper.trusted.splashscreens.PwaWrapperSplashScreenStrategy;
@@ -231,10 +230,11 @@ public class LauncherActivity extends Activity {
 
         mTwaLauncher = createTwaLauncher();
         mTwaLauncher.launch(twaBuilder,
-                getCustomTabsCallback(),
+                new ValidatedQualityEnforcer(() -> mTwaLauncher.launchWhenRelationshipValidated(twaBuilder, mSplashScreenStrategy, () -> mBrowserWasLaunched = true)),
                 mSplashScreenStrategy,
                 () -> mBrowserWasLaunched = true,
-                getFallbackStrategy());
+                getFallbackStrategy()
+        );
 
         if (!sChromeVersionChecked) {
             ChromeUpdatePrompt.promptIfNeeded(this, mTwaLauncher.getProviderPackage());
@@ -251,10 +251,6 @@ public class LauncherActivity extends Activity {
 
         ManageDataLauncherActivity.addSiteSettingsShortcut(this,
                 mTwaLauncher.getProviderPackage());
-    }
-
-    protected CustomTabsCallback getCustomTabsCallback() {
-        return new QualityEnforcer();
     }
 
     protected TwaLauncher createTwaLauncher() {
