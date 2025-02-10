@@ -171,6 +171,21 @@
             </intent-filter>
         </service>
 
+        <service
+            android:name="androidx.browser.trusted.TrustedWebActivityService"
+            android:enabled="true"
+            android:exported="true">
+
+            <meta-data 
+                android:name="android.support.customtabs.trusted.SMALL_ICON"
+                android:resource="@drawable/ic_notification_icon" />
+
+            <intent-filter>
+                <action android:name="android.support.customtabs.trusted.TRUSTED_WEB_ACTIVITY_SERVICE"/>
+                <category android:name="android.intent.category.DEFAULT"/>
+            </intent-filter>
+        </service>
+
         <activity android:name="com.google.androidbrowserhelper.trusted.NotificationPermissionRequestActivity" />
 
         <!--            <activity android:name=-->
