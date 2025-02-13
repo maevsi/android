@@ -140,6 +140,8 @@
             </intent-filter>
         </activity>
 
+        <activity android:name="com.google.androidbrowserhelper.trusted.NotificationPermissionRequestActivity" />
+
         <activity android:name="com.google.androidbrowserhelper.trusted.FocusActivity" />
 
         <activity
@@ -157,7 +159,7 @@
         </provider>
 
         <service
-            android:name=".DelegationService"
+            android:name=".NotificationDelegationService"
             android:enabled="@bool/enableNotification"
             android:exported="@bool/enableNotification">
 
@@ -176,7 +178,7 @@
             android:enabled="true"
             android:exported="true">
 
-            <meta-data 
+            <meta-data
                 android:name="android.support.customtabs.trusted.SMALL_ICON"
                 android:resource="@drawable/ic_notification_icon" />
 
@@ -186,7 +188,6 @@
             </intent-filter>
         </service>
 
-        <activity android:name="com.google.androidbrowserhelper.trusted.NotificationPermissionRequestActivity" />
 
         <!--            <activity android:name=-->
         <!--        "com.google.androidbrowserhelper.locationdelegation.PermissionRequestActivity"/>-->

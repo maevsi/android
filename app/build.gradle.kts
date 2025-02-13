@@ -63,12 +63,6 @@ object TwaManifest {
 android {
     signingConfigs {
         if (keystorePropertiesFile.exists()) {
-            create("upload") {
-                keyAlias = keystoreProperties.getProperty("uploadKeyAlias")
-                keyPassword = keystoreProperties.getProperty("uploadKeyPassword")
-                storeFile = file(keystoreProperties.getProperty("uploadStoreFile"))
-                storePassword = keystoreProperties.getProperty("uploadStorePassword")
-            }
             getByName("debug") {
                 keyAlias = keystoreProperties.getProperty("debugKeyAlias")
                 keyPassword = keystoreProperties.getProperty("debugKeyPassword")
@@ -185,20 +179,8 @@ android {
     } else {
         null
     }
-    val signingConfigUpload = if (keystorePropertiesFile.exists()) {
-        signingConfigs.getByName("upload")
-    } else {
-        null
-    }
 
     buildTypes {
-        release {
-            proguardFiles(
-                getDefaultProguardFile("proguard-android-optimize.txt"), "proguard-rules.pro"
-            )
-            signingConfig = signingConfigUpload
-            isMinifyEnabled = true
-        }
         debug {
             signingConfig = signingConfigDebug
         }
