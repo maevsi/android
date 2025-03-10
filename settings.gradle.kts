@@ -13,5 +13,5 @@ dependencyResolutionManagement {
     }
 }
 
-rootProject.name = "maevsi"
+rootProject.name = "vibetype"
 include(":app")
