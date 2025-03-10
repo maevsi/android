@@ -36,7 +36,7 @@
         android:manageSpaceActivity="com.google.androidbrowserhelper.trusted.ManageDataLauncherActivity"
 
         android:supportsRtl="true"
-        android:theme="@style/Theme.Maevsi"
+        android:theme="@style/Theme.Vibetype"
         tools:targetApi="35">
         <!--        android:roundIcon="@mipmap/ic_launcher_round"-->
         <!--        android:theme="@android:style/Theme.Translucent.NoTitleBar"-->
@@ -64,7 +64,7 @@
             android:alwaysRetainTaskState="true"
             android:exported="true"
             android:label="@string/launcherName"
-            android:theme="@style/Theme.Maevsi">
+            android:theme="@style/Theme.Vibetype">
             <meta-data
                 android:name="android.support.customtabs.trusted.DEFAULT_URL"
                 android:value="@string/launchUrl" />
