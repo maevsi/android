@@ -31,8 +31,8 @@ object TwaManifest {
     const val hostName = "maev.si" // The domain being opened in the TWA.
     const val launchPath =
         "/?source=pwa" // The start path for the TWA. Must be relative to the domain.
-    const val name = "maevsi" // The application name.
-    const val launcherName = "maevsi" // The name shown on the Android Launcher.
+    const val name = "vibetype" // The application name.
+    const val launcherName = "Vibetype" // The name shown on the Android Launcher.
     const val themeColor = "#27272a" // The color used for the status bar.
     const val themeColorDark = themeColor // The color used for the dark status bar.
     const val navigationColor = themeColor // The color used for the navigation bar.
