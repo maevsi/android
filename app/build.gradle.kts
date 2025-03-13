@@ -28,7 +28,7 @@ interface Shortcut {
 object TwaManifest {
     const val applicationId = "si.maev.twa"
     const val protocol = "https://"
-    const val hostName = "maev.si" // The domain being opened in the TWA.
+    const val hostName = "vibetype.app" // The domain being opened in the TWA.
     const val launchPath =
         "/?source=pwa" // The start path for the TWA. Must be relative to the domain.
     const val name = "Vibetype" // The application name.
