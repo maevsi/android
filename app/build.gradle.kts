@@ -28,13 +28,13 @@ interface Shortcut {
 object TwaManifest {
     const val applicationId = "si.maev.twa"
     const val protocol = "https://"
-    const val hostName = "maev.si" // The domain being opened in the TWA.
+    const val hostName = "vibetype.app" // The domain being opened in the TWA.
     const val launchPath =
         "/?source=pwa" // The start path for the TWA. Must be relative to the domain.
-    const val name = "maevsi" // The application name.
-    const val launcherName = "maevsi" // The name shown on the Android Launcher.
-    const val themeColor = "#27272a" // The color used for the status bar.
-    const val themeColorDark = themeColor // The color used for the dark status bar.
+    const val name = "Vibetype" // The application name.
+    const val launcherName = "Vibetype" // The name shown on the Android Launcher.
+    const val themeColor = "#ffffff" // The color used for the status bar.
+    const val themeColorDark = "#191911" // The color used for the dark status bar.
     const val navigationColor = themeColor // The color used for the navigation bar.
     const val navigationColorDark = themeColorDark // The color used for the dark navbar.
     const val navigationDividerColor = themeColor // The navbar divider color.
