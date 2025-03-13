@@ -240,7 +240,7 @@ dependencies {
     implementation("androidx.compose.ui:ui-graphics:1.7.8")
     implementation("androidx.compose.ui:ui-tooling-preview:1.7.8")
     implementation("androidx.compose.material3:material3:1.3.1")
-//    implementation 'com.google.androidbrowserhelper:locationdelegation:1.1.1'
+    implementation("com.google.androidbrowserhelper:locationdelegation:1.1.1")
 //    implementation 'com.google.androidbrowserhelper:billing:1.0.0-alpha10'
     implementation("com.google.androidbrowserhelper:androidbrowserhelper:2.5.0")
     testImplementation("junit:junit:4.13.2")

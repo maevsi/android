@@ -159,7 +159,7 @@
         </provider>
 
         <service
-            android:name=".NotificationDelegationService"
+            android:name=".DelegationService"
             android:enabled="@bool/enableNotification"
             android:exported="@bool/enableNotification">
 
@@ -183,14 +183,13 @@
                 android:resource="@drawable/ic_notification_icon" />
 
             <intent-filter>
-                <action android:name="android.support.customtabs.trusted.TRUSTED_WEB_ACTIVITY_SERVICE"/>
-                <category android:name="android.intent.category.DEFAULT"/>
+                <action android:name="android.support.customtabs.trusted.TRUSTED_WEB_ACTIVITY_SERVICE" />
+                <category android:name="android.intent.category.DEFAULT" />
             </intent-filter>
         </service>
 
 
-        <!--            <activity android:name=-->
-        <!--        "com.google.androidbrowserhelper.locationdelegation.PermissionRequestActivity"/>-->
+        <activity android:name="com.google.androidbrowserhelper.locationdelegation.PermissionRequestActivity" />
 
         <!--        <activity-->
         <!--            android:name="com.google.androidbrowserhelper.playbilling.provider.PaymentActivity"-->
