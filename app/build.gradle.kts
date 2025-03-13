@@ -33,8 +33,8 @@ object TwaManifest {
         "/?source=pwa" // The start path for the TWA. Must be relative to the domain.
     const val name = "Vibetype" // The application name.
     const val launcherName = "Vibetype" // The name shown on the Android Launcher.
-    const val themeColor = "#191911" // The color used for the status bar.
-    const val themeColorDark = themeColor // The color used for the dark status bar.
+    const val themeColor = "#ffffff" // The color used for the status bar.
+    const val themeColorDark = "#191911" // The color used for the dark status bar.
     const val navigationColor = themeColor // The color used for the navigation bar.
     const val navigationColorDark = themeColorDark // The color used for the dark navbar.
     const val navigationDividerColor = themeColor // The navbar divider color.
