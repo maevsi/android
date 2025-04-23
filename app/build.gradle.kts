@@ -79,12 +79,12 @@ android {
     }
 
     namespace = "si.maev.twa"
-    compileSdk = 35
+    compileSdk = 36
 
     defaultConfig {
         applicationId = "si.maev.twa"
         minSdk = 21
-        targetSdk = 35
+        targetSdk = 36
         versionCode = 7
         versionName = "0.1.1"
 
