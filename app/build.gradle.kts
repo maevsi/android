@@ -79,12 +79,12 @@ android {
     }
 
     namespace = "si.maev.twa"
-    compileSdk = 35
+    compileSdk = 36
 
     defaultConfig {
         applicationId = "si.maev.twa"
         minSdk = 21
-        targetSdk = 35
+        targetSdk = 36
         versionCode = 7
         versionName = "0.1.1"
 
@@ -240,9 +240,9 @@ dependencies {
     implementation("androidx.compose.ui:ui-graphics:1.7.8")
     implementation("androidx.compose.ui:ui-tooling-preview:1.7.8")
     implementation("androidx.compose.material3:material3:1.3.2")
-    implementation("com.google.androidbrowserhelper:locationdelegation:1.1.1")
+    implementation("com.google.androidbrowserhelper:locationdelegation:1.1.2")
 //    implementation 'com.google.androidbrowserhelper:billing:1.0.0-alpha10'
-    implementation("com.google.androidbrowserhelper:androidbrowserhelper:2.5.0")
+    implementation("com.google.androidbrowserhelper:androidbrowserhelper:2.6.0")
     testImplementation("junit:junit:4.13.2")
     androidTestImplementation("androidx.test.ext:junit:1.2.1")
     androidTestImplementation("androidx.test.espresso:espresso-core:3.6.1")

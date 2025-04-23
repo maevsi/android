@@ -37,7 +37,7 @@
 
         android:supportsRtl="true"
         android:theme="@android:style/Theme.Translucent.NoTitleBar"
-        tools:targetApi="35">
+        tools:targetApi="36">
         <!--        android:roundIcon="@mipmap/ic_launcher_round"-->
 
         <meta-data
