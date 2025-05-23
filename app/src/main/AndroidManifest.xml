@@ -107,6 +107,10 @@
                 android:value="@string/providerAuthority" />
 
             <meta-data
+                android:name="android.support.customtabs.trusted.START_CHROME_BEFORE_ANIMATION_COMPLETE"
+                android:value="@bool/startChromeBeforeAnimationComplete" />
+
+            <meta-data
                 android:name="android.app.shortcuts"
                 android:resource="@xml/shortcuts" />
 

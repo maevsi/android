@@ -40,6 +40,7 @@ object TwaManifest {
     const val navigationDividerColor = themeColor // The navbar divider color.
     const val navigationDividerColorDark = themeColorDark // The dark navbar divider color.
     const val backgroundColor = themeColorDark // The color used for the splash screen background.
+    const val startChromeBeforeAnimationComplete = true // Set to true to start chrome before the splash screen animation is complete.
     const val enableNotifications = true // Set to true to enable notification delegation.
 
     // Every shortcut must include the following fields:
@@ -150,6 +151,9 @@ android {
 
         // Defines a provider authority for the Splash Screen
         resValue("string", "providerAuthority", TwaManifest.applicationId + ".fileprovider")
+
+        // Sets the preference to start chrome before the splash screen animation is complete, a performance tweak.
+        resValue("bool", "startChromeBeforeAnimationComplete", TwaManifest.startChromeBeforeAnimationComplete.toString())
 
         // The enableNotification resource is used to enable or disable the
         // TrustedWebActivityService, by changing the android:enabled and android:exported
