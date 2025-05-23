@@ -20,8 +20,7 @@
      application, the package attribute will need to reflect the correct path in order to use
      the abbreviated format. -->
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:tools="http://schemas.android.com/tools"
-    package="si.maev.twa">
+    xmlns:tools="http://schemas.android.com/tools">
 
     <uses-permission android:name="android.permission.POST_NOTIFICATIONS" />
 
