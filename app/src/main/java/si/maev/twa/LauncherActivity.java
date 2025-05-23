@@ -172,7 +172,8 @@ public class LauncherActivity extends Activity {
                     getSplashImageScaleType(),
                     getSplashImageTransformationMatrix(),
                     mMetadata.splashScreenFadeOutDurationMillis,
-                    mMetadata.fileProviderAuthority);
+                    mMetadata.fileProviderAuthority,
+                    true);
         }
 
         if (shouldLaunchImmediately()) {
@@ -433,4 +434,3 @@ public class LauncherActivity extends Activity {
         return true;
     }
 }
-
