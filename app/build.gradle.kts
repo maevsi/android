@@ -242,7 +242,7 @@ dependencies {
     implementation("androidx.compose.material3:material3:1.3.2")
     implementation("com.google.androidbrowserhelper:locationdelegation:1.1.2")
 //    implementation 'com.google.androidbrowserhelper:billing:1.0.0-alpha10'
-    implementation("com.google.androidbrowserhelper:androidbrowserhelper:2.6.1")
+    implementation("com.google.androidbrowserhelper:androidbrowserhelper:2.6.2")
     testImplementation("junit:junit:4.13.2")
     androidTestImplementation("androidx.test.ext:junit:1.2.1")
     androidTestImplementation("androidx.test.espresso:espresso-core:3.6.1")
