@@ -12,7 +12,7 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-package si.maev.twa;
+package si.maev.twa.androidbrowserhelper;
 
 import android.app.Activity;
 import android.content.Intent;
@@ -52,7 +52,6 @@ import com.google.androidbrowserhelper.trusted.splashscreens.PwaWrapperSplashScr
 
 import org.json.JSONException;
 
-import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
@@ -102,7 +101,7 @@ import java.util.Map;
  *     <item name="android:backgroundDimEnabled">false</item>
  * </style>
  * }</pre>
- *
+ * <p>
  * Note that even with splash screen enabled, it is still recommended to use a transparent theme.
  * That way the Activity can gracefully fall back to being a transparent "trampoline" activity in
  * the following cases:
@@ -121,10 +120,14 @@ public class LauncherActivity extends Activity {
 
     private static final String FALLBACK_TYPE_WEBVIEW = "webview";
 
-    /** We only want to show the update prompt once per instance of this application. */
+    /**
+     * We only want to show the update prompt once per instance of this application.
+     */
     private static boolean sChromeVersionChecked;
 
-    /** See comment in onCreate. */
+    /**
+     * See comment in onCreate.
+     */
     private static int sLauncherActivitiesAlive;
 
     private LauncherActivityMetadata mMetadata;
@@ -258,9 +261,12 @@ public class LauncherActivity extends Activity {
         mTwaLauncher = createTwaLauncher();
         mTwaLauncher.setStartupUptimeMillis(mStartupUptimeMillis);
         mTwaLauncher.launch(twaBuilder,
-                new ValidatedQualityEnforcer(() -> mTwaLauncher.launchWhenSessionEstablished(twaBuilder, mSplashScreenStrategy, () -> mBrowserWasLaunched = true)),
+                getCustomTabsCallback(),
                 mSplashScreenStrategy,
-                () -> { mBrowserWasLaunched = true; finish(); },
+                () -> {
+                    mBrowserWasLaunched = true;
+                    finish();
+                },
                 getFallbackStrategy());
 
         if (!sChromeVersionChecked) {
@@ -313,7 +319,7 @@ public class LauncherActivity extends Activity {
             ShareTarget shareTarget = SharingUtils.parseShareTargetJson(mMetadata.shareTarget);
             twaBuilder.setShareParams(shareTarget, shareData);
         } catch (JSONException e) {
-            Log.d(TAG, "Failed to parse share target json: " + e.toString());
+            Log.d(TAG, "Failed to parse share target json: " + e);
         }
     }
 
@@ -325,7 +331,7 @@ public class LauncherActivity extends Activity {
             if (bundle == null) return;
             uris = FileHandlingData.fromBundle(bundle).uris;
         } else {
-            uris = Arrays.asList(getIntent().getData());
+            uris = Collections.singletonList(getIntent().getData());
         }
 
         for (Uri uri : uris) {
@@ -462,7 +468,7 @@ public class LauncherActivity extends Activity {
             Uri format = protocolHandlers.get(scheme);
             if (format != null) {
                 String target = Uri.encode(intentUrl.toString());
-                Uri targetUrl =  Uri.parse(String.format(format.toString(), target));
+                Uri targetUrl = Uri.parse(String.format(format.toString(), target));
                 Log.d(TAG, "Using protocol handler url: " + targetUrl);
                 return targetUrl;
             }

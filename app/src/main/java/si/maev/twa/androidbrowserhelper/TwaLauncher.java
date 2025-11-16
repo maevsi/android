@@ -12,14 +12,12 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-package si.maev.twa;
+package si.maev.twa.androidbrowserhelper;
 
 import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
 import android.net.Uri;
-import android.os.Bundle;
-import android.provider.Browser;
 import android.util.Log;
 
 import androidx.annotation.NonNull;
@@ -37,7 +35,6 @@ import androidx.browser.trusted.TrustedWebActivityIntent;
 import androidx.browser.trusted.TrustedWebActivityIntentBuilder;
 
 import com.google.androidbrowserhelper.BuildConfig;
-import com.google.androidbrowserhelper.trusted.ChromeLegacyUtils;
 import com.google.androidbrowserhelper.trusted.ChromeOsSupport;
 import com.google.androidbrowserhelper.trusted.FocusActivity;
 import com.google.androidbrowserhelper.trusted.LauncherActivityMetadata;
@@ -192,15 +189,15 @@ public class TwaLauncher {
     /**
      * Similar to {@link #launch(Uri)}, but allows more customization.
      *
-     * @param twaBuilder {@link TrustedWebActivityIntentBuilder} containing the url to open, along with
-     * optional parameters: status bar color, additional trusted origins, etc.
-     * @param customTabsCallback {@link CustomTabsCallback} to get messages from the browser, use
-     * for quality enforcement.
+     * @param twaBuilder           {@link TrustedWebActivityIntentBuilder} containing the url to open, along with
+     *                             optional parameters: status bar color, additional trusted origins, etc.
+     * @param customTabsCallback   {@link CustomTabsCallback} to get messages from the browser, use
+     *                             for quality enforcement.
      * @param splashScreenStrategy {@link SplashScreenStrategy} to use for showing splash screens,
-     * null if splash screen not needed.
-     * @param completionCallback Callback triggered when the url has been opened.
-     * @param fallbackStrategy Called when there is no TWA provider available or when launching
-     * the Trusted Web Activity fails.
+     *                             null if splash screen not needed.
+     * @param completionCallback   Callback triggered when the url has been opened.
+     * @param fallbackStrategy     Called when there is no TWA provider available or when launching
+     *                             the Trusted Web Activity fails.
      */
     public void launch(TrustedWebActivityIntentBuilder twaBuilder,
                        CustomTabsCallback customTabsCallback,
@@ -231,13 +228,13 @@ public class TwaLauncher {
      * Similar to {@link #launch(Uri)}, but allows more customization. Uses a Custom Tabs fallback
      * when a TWA provider is not available or when launching a TWA fails.
      *
-     * @param twaBuilder {@link TrustedWebActivityIntentBuilder} containing the url to open, along with
-     * optional parameters: status bar color, additional trusted origins, etc.
-     * @param customTabsCallback {@link CustomTabsCallback} to get messages from the browser, use
-     * for quality enforcement.
+     * @param twaBuilder           {@link TrustedWebActivityIntentBuilder} containing the url to open, along with
+     *                             optional parameters: status bar color, additional trusted origins, etc.
+     * @param customTabsCallback   {@link CustomTabsCallback} to get messages from the browser, use
+     *                             for quality enforcement.
      * @param splashScreenStrategy {@link SplashScreenStrategy} to use for showing splash screens,
-     * null if splash screen not needed.
-     * @param completionCallback Callback triggered when the url has been opened.
+     *                             null if splash screen not needed.
+     * @param completionCallback   Callback triggered when the url has been opened.
      */
     public void launch(TrustedWebActivityIntentBuilder twaBuilder,
                        CustomTabsCallback customTabsCallback,
@@ -256,12 +253,8 @@ public class TwaLauncher {
             splashScreenStrategy.onTwaLaunchInitiated(mProviderPackage, twaBuilder);
         }
 
-        Runnable onSessionCreatedRunnable = () -> {
-            assert mSession != null;
-            mSession.validateRelationship(CustomTabsService.RELATION_USE_AS_ORIGIN,
-                    twaBuilder.getUri(), null);
-        };
-//                launchWhenSessionEstablished(twaBuilder, splashScreenStrategy, completionCallback);
+        Runnable onSessionCreatedRunnable = () ->
+                launchWhenSessionEstablished(twaBuilder, splashScreenStrategy, completionCallback);
 
         if (mSession != null) {
             onSessionCreatedRunnable.run();
@@ -285,9 +278,9 @@ public class TwaLauncher {
                 mContext, mProviderPackage, mServiceConnection);
     }
 
-    void launchWhenSessionEstablished(TrustedWebActivityIntentBuilder twaBuilder,
-                                      @Nullable SplashScreenStrategy splashScreenStrategy,
-                                      @Nullable Runnable completionCallback) {
+    private void launchWhenSessionEstablished(TrustedWebActivityIntentBuilder twaBuilder,
+                                              @Nullable SplashScreenStrategy splashScreenStrategy,
+                                              @Nullable Runnable completionCallback) {
         if (mSession == null) {
             throw new IllegalStateException("mSession is null in launchWhenSessionEstablished");
         }
@@ -308,11 +301,7 @@ public class TwaLauncher {
             // for further details.
         }
         Log.d(TAG, "Launching Trusted Web Activity.");
-        TrustedWebActivityIntent intent = builder.build(mSession);
-
-        Bundle headers = new Bundle();
-        headers.putString("vibetype_platform", "android");
-        intent.getIntent().putExtra(Browser.EXTRA_HEADERS, headers);
+        TrustedWebActivityIntent intent = getIntent(builder.build(mSession));
 
         if (mStartupUptimeMillis != 0) {
             intent.getIntent().putExtra(EXTRA_STARTUP_UPTIME_MILLIS, mStartupUptimeMillis);
@@ -325,6 +314,10 @@ public class TwaLauncher {
         if (completionCallback != null) {
             completionCallback.run();
         }
+    }
+
+    protected TrustedWebActivityIntent getIntent(TrustedWebActivityIntent intent) {
+        return intent;
     }
 
     /**
