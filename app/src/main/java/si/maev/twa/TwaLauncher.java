@@ -311,7 +311,7 @@ public class TwaLauncher {
         TrustedWebActivityIntent intent = builder.build(mSession);
 
         Bundle headers = new Bundle();
-        headers.putString("vibetype-platform", "android");
+        headers.putString("vibetype_platform", "android");
         intent.getIntent().putExtra(Browser.EXTRA_HEADERS, headers);
 
         if (mStartupUptimeMillis != 0) {
