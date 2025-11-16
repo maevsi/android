@@ -75,6 +75,10 @@
                 android:resource="@color/colorPrimary" />
 
             <meta-data
+                android:name="android.support.customtabs.trusted.LAUNCH_HANDLER_CLIENT_MODE"
+                android:value="@string/launchHandlerClientMode" />
+
+            <meta-data
                 android:name="android.support.customtabs.trusted.STATUS_BAR_COLOR_DARK"
                 android:resource="@color/colorPrimaryDark" />
 
@@ -127,6 +131,10 @@
                 android:name="android.support.customtabs.trusted.SCREEN_ORIENTATION"
                 android:value="@string/orientation" />
             -->
+
+            <meta-data
+                android:name="android.support.customtabs.trusted.DISPLAY_OVERRIDE"
+                android:resource="@array/display_override" />
 
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
