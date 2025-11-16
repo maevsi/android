@@ -15,7 +15,17 @@
      limitations under the License.
 -->
 <resources>
-  
+
+  <!--
+    The "fullscreen" and "fullscreen-sticky" TWA manifest values correspond to "immersive" and "sticky-immersive"
+    AndroidManifest values.
+  -->
+
+  <string-array name="display_override">
+    <item>window-controls-overlay</item>
+    <item>standalone</item>
+    <item>browser</item>
+  </string-array>
 
   <!--
     This variable below expresses the relationship between the app and the site,
@@ -38,5 +48,5 @@
             \"site\": \"https://vibetype.app\"
         }
     }]
-  </string>  
+  </string>
 </resources>

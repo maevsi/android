@@ -25,19 +25,14 @@
     <uses-permission android:name="android.permission.POST_NOTIFICATIONS" />
 
     <application
-        android:name="Application"
         android:allowBackup="true"
-        android:dataExtractionRules="@xml/data_extraction_rules"
-        android:fullBackupContent="@xml/backup_rules"
         android:icon="@mipmap/ic_launcher"
         android:label="@string/appName"
 
         android:manageSpaceActivity="com.google.androidbrowserhelper.trusted.ManageDataLauncherActivity"
 
         android:supportsRtl="true"
-        android:theme="@android:style/Theme.Translucent.NoTitleBar"
-        tools:targetApi="36">
-        <!--        android:roundIcon="@mipmap/ic_launcher_round"-->
+        android:theme="@android:style/Theme.Translucent.NoTitleBar">
 
         <meta-data
             android:name="asset_statements"
@@ -51,10 +46,19 @@
             android:name="twa_generator"
             android:value="@string/generatorApp" />
 
-        <activity android:name="com.google.androidbrowserhelper.trusted.ManageDataLauncherActivity">
+
+        <activity
+            android:name="com.google.androidbrowserhelper.trusted.ManageDataLauncherActivity"
+            android:enabled="true"
+            android:excludeFromRecents="true"
+            android:exported="false">
             <meta-data
                 android:name="android.support.customtabs.trusted.MANAGE_SPACE_URL"
                 android:value="@string/launchUrl" />
+            <intent-filter>
+                <action android:name="android.intent.action.APPLICATION_PREFERENCES" />
+                <category android:name="android.intent.category.DEFAULT" />
+            </intent-filter>
         </activity>
 
         <activity
@@ -69,6 +73,10 @@
             <meta-data
                 android:name="android.support.customtabs.trusted.STATUS_BAR_COLOR"
                 android:resource="@color/colorPrimary" />
+
+            <meta-data
+                android:name="android.support.customtabs.trusted.LAUNCH_HANDLER_CLIENT_MODE"
+                android:value="@string/launchHandlerClientMode" />
 
             <meta-data
                 android:name="android.support.customtabs.trusted.STATUS_BAR_COLOR_DARK"
@@ -124,6 +132,10 @@
                 android:value="@string/orientation" />
             -->
 
+            <meta-data
+                android:name="android.support.customtabs.trusted.DISPLAY_OVERRIDE"
+                android:resource="@array/display_override" />
+
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
                 <category android:name="android.intent.category.LAUNCHER" />
@@ -140,8 +152,6 @@
                     android:scheme="https" />
             </intent-filter>
         </activity>
-
-        <activity android:name="com.google.androidbrowserhelper.trusted.NotificationPermissionRequestActivity" />
 
         <activity android:name="com.google.androidbrowserhelper.trusted.FocusActivity" />
 
@@ -189,6 +199,7 @@
             </intent-filter>
         </service>
 
+        <activity android:name="com.google.androidbrowserhelper.trusted.NotificationPermissionRequestActivity" />
 
         <activity android:name="com.google.androidbrowserhelper.locationdelegation.PermissionRequestActivity" />
 
@@ -214,6 +225,6 @@
         <!--            <intent-filter>-->
         <!--                <action android:name="org.chromium.intent.action.IS_READY_TO_PAY" />-->
         <!--            </intent-filter>-->
-        <!--        </service> -->
+        <!--        </service>-->
     </application>
 </manifest>

@@ -1,15 +1,14 @@
 import com.android.build.gradle.internal.tasks.factory.dependsOn
-import groovy.xml.MarkupBuilder
-import java.io.StringWriter
-import java.io.FileInputStream
-import java.util.Properties
 import groovy.util.IndentPrinter
+import groovy.xml.MarkupBuilder
 import org.jetbrains.kotlin.gradle.dsl.JvmTarget
+import java.io.FileInputStream
+import java.io.StringWriter
+import java.util.Properties
 
 plugins {
     id("com.android.application")
     id("org.jetbrains.kotlin.android")
-    id("org.jetbrains.kotlin.plugin.compose")
 }
 
 val keystorePropertiesFile: File = rootProject.file("keystore.properties")
@@ -41,7 +40,8 @@ object TwaManifest {
     const val navigationDividerColor = themeColor // The navbar divider color.
     const val navigationDividerColorDark = themeColorDark // The dark navbar divider color.
     const val backgroundColor = themeColorDark // The color used for the splash screen background.
-    const val startChromeBeforeAnimationComplete = true // Set to true to start chrome before the splash screen animation is complete.
+    const val startChromeBeforeAnimationComplete =
+        true // Set to true to start chrome before the splash screen animation is complete.
     const val enableNotifications = true // Set to true to enable notification delegation.
 
     // Every shortcut must include the following fields:
@@ -60,6 +60,8 @@ object TwaManifest {
     const val fallbackType = "customtabs"
     const val enableSiteSettingsShortcut = "true"
     // const val orientation = "any" // Disabled to respect system's rotation setting
+    const val launchHandlerClientMode = "auto"
+//    val displayOverride = arrayOf("window-controls-overlay", "standalone", "browser") // Hardcoded in string resources
 }
 
 android {
@@ -85,7 +87,7 @@ android {
 
     defaultConfig {
         applicationId = "si.maev.twa"
-        minSdk = 21
+        minSdk = 23
         targetSdk = 36
         versionCode = 10
         versionName = "0.1.4"
@@ -154,7 +156,11 @@ android {
         resValue("string", "providerAuthority", TwaManifest.applicationId + ".fileprovider")
 
         // Sets the preference to start chrome before the splash screen animation is complete, a performance tweak.
-        resValue("bool", "startChromeBeforeAnimationComplete", TwaManifest.startChromeBeforeAnimationComplete.toString())
+        resValue(
+            "bool",
+            "startChromeBeforeAnimationComplete",
+            TwaManifest.startChromeBeforeAnimationComplete.toString()
+        )
 
         // The enableNotification resource is used to enable or disable the
         // TrustedWebActivityService, by changing the android:enabled and android:exported
@@ -177,6 +183,8 @@ android {
         resValue("string", "fallbackType", TwaManifest.fallbackType)
         resValue("bool", "enableSiteSettingsShortcut", TwaManifest.enableSiteSettingsShortcut)
         // resValue("string", "orientation", TwaManifest.orientation) // Disabled to respect system's rotation setting
+        resValue("string", "launchHandlerClientMode", TwaManifest.launchHandlerClientMode)
+        // resValue("string-array", "display_override", TwaManifest.displayOverride.joinToString(prefix = "{", postfix = "}", transform = { s -> "\"$s\"" })) // Hardcoded in string resources
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
 
@@ -213,18 +221,14 @@ android {
     }
 
     compileOptions {
-        sourceCompatibility = JavaVersion.VERSION_1_8
-        targetCompatibility = JavaVersion.VERSION_1_8
+        sourceCompatibility = JavaVersion.VERSION_21
+        targetCompatibility = JavaVersion.VERSION_21
     }
 
     kotlin {
         compilerOptions {
-            jvmTarget = JvmTarget.JVM_1_8
+            jvmTarget = JvmTarget.JVM_21
         }
-    }
-
-    buildFeatures {
-        compose = true
     }
 
     packaging {
@@ -235,24 +239,9 @@ android {
 }
 
 dependencies {
-    implementation("androidx.core:core-ktx:1.17.0")
-    implementation("androidx.lifecycle:lifecycle-runtime-ktx:2.9.4")
-    implementation("androidx.activity:activity-compose:1.11.0")
-    implementation(platform("androidx.compose:compose-bom:2025.11.00"))
-    implementation("androidx.compose.ui:ui:1.9.4")
-    implementation("androidx.compose.ui:ui-graphics:1.9.4")
-    implementation("androidx.compose.ui:ui-tooling-preview:1.9.4")
-    implementation("androidx.compose.material3:material3:1.4.0")
     implementation("com.google.androidbrowserhelper:locationdelegation:1.1.2")
 //    implementation 'com.google.androidbrowserhelper:billing:1.0.0-alpha10'
-    implementation("com.google.androidbrowserhelper:androidbrowserhelper:2.6.2")
-    testImplementation("junit:junit:4.13.2")
-    androidTestImplementation("androidx.test.ext:junit:1.3.0")
-    androidTestImplementation("androidx.test.espresso:espresso-core:3.7.0")
-    androidTestImplementation(platform("androidx.compose:compose-bom:2025.11.00"))
-    androidTestImplementation("androidx.compose.ui:ui-test-junit4:1.9.4")
-    debugImplementation("androidx.compose.ui:ui-tooling:1.9.4")
-    debugImplementation("androidx.compose.ui:ui-test-manifest:1.9.4")
+    implementation("com.google.androidbrowserhelper:androidbrowserhelper:2.7.0-alpha03") // Alpha version adds edge-to-edge support which removes a warning in Play console
 }
 
 tasks.register("generateShortcutsFile") {

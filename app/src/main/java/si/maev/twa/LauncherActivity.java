@@ -22,11 +22,13 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.os.SystemClock;
 import android.util.Log;
+import android.view.WindowManager;
 import android.widget.ImageView;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.browser.customtabs.CustomTabColorSchemeParams;
+import androidx.browser.customtabs.CustomTabsCallback;
 import androidx.browser.customtabs.CustomTabsIntent;
 import androidx.browser.trusted.FileHandlingData;
 import androidx.browser.trusted.TrustedWebActivityDisplayMode;
@@ -35,11 +37,15 @@ import androidx.browser.trusted.TrustedWebActivityService;
 import androidx.browser.trusted.sharing.ShareData;
 import androidx.browser.trusted.sharing.ShareTarget;
 import androidx.core.content.ContextCompat;
+import androidx.core.view.WindowCompat;
 
 import com.google.androidbrowserhelper.trusted.ChromeOsSupport;
 import com.google.androidbrowserhelper.trusted.ChromeUpdatePrompt;
 import com.google.androidbrowserhelper.trusted.LauncherActivityMetadata;
 import com.google.androidbrowserhelper.trusted.ManageDataLauncherActivity;
+import com.google.androidbrowserhelper.trusted.QualityEnforcer;
+import com.google.androidbrowserhelper.trusted.SessionStore;
+import com.google.androidbrowserhelper.trusted.SharedPreferencesTokenStore;
 import com.google.androidbrowserhelper.trusted.SharingUtils;
 import com.google.androidbrowserhelper.trusted.TwaSharedPreferencesManager;
 import com.google.androidbrowserhelper.trusted.splashscreens.PwaWrapperSplashScreenStrategy;
@@ -137,6 +143,9 @@ public class LauncherActivity extends Activity {
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
+        WindowCompat.enableEdgeToEdge(getWindow());
+        getWindow().addFlags(WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS);
+
         mStartupUptimeMillis = SystemClock.uptimeMillis();
         sLauncherActivitiesAlive++;
         boolean twaAlreadyRunning = sLauncherActivitiesAlive > 1;
@@ -230,10 +239,11 @@ public class LauncherActivity extends Activity {
                         .setColorSchemeParams(
                                 CustomTabsIntent.COLOR_SCHEME_DARK, darkModeColorScheme)
                         .setDisplayMode(getDisplayMode())
+                        .setDisplayOverrideList(mMetadata.displayOverrideList)
                         .setScreenOrientation(mMetadata.screenOrientation)
                         .setLaunchHandlerClientMode(mMetadata.launchHandlerClientMode);
 
-        Uri intentUrl = getIntent().getData();
+        Uri intentUrl = getUrlForIntent(getIntent());
         if (!launchUrl.equals(intentUrl) && intentUrl != null) {
             twaBuilder.setOriginalLaunchUrl(intentUrl);
         }
@@ -250,9 +260,8 @@ public class LauncherActivity extends Activity {
         mTwaLauncher.launch(twaBuilder,
                 new ValidatedQualityEnforcer(() -> mTwaLauncher.launchWhenSessionEstablished(twaBuilder, mSplashScreenStrategy, () -> mBrowserWasLaunched = true)),
                 mSplashScreenStrategy,
-                () -> mBrowserWasLaunched = true,
-                getFallbackStrategy()
-        );
+                () -> { mBrowserWasLaunched = true; finish(); },
+                getFallbackStrategy());
 
         if (!sChromeVersionChecked) {
             ChromeUpdatePrompt.promptIfNeeded(this, mTwaLauncher.getProviderPackage());
@@ -271,8 +280,13 @@ public class LauncherActivity extends Activity {
                 mTwaLauncher.getProviderPackage());
     }
 
+    protected CustomTabsCallback getCustomTabsCallback() {
+        return new QualityEnforcer();
+    }
+
     protected TwaLauncher createTwaLauncher() {
-        return new TwaLauncher(this, getTaskId());
+        return new TwaLauncher(this, null, SessionStore.makeSessionId(getTaskId()),
+                new SharedPreferencesTokenStore(this));
     }
 
     private boolean splashScreenNeeded() {
@@ -397,6 +411,15 @@ public class LauncherActivity extends Activity {
         return Collections.emptyMap();
     }
 
+    /**
+     * Override this to define a custom mapping from intent to URL (e.g., based on intent action).
+     * The returned URL may be further modified by the Protocol Handler support.
+     */
+    @Nullable
+    protected Uri getUrlForIntent(Intent intent) {
+        return intent.getData();
+    }
+
     @Override
     public void onEnterAnimationComplete() {
         super.onEnterAnimationComplete();
@@ -407,8 +430,8 @@ public class LauncherActivity extends Activity {
 
     /**
      * Returns the URL that the Trusted Web Activity should be launched to. By default this
-     * implementation checks to see if the Activity was launched with an Intent with data, if so
-     * attempt to launch to that URL. If not, read the
+     * implementation checks to see if there is a URL specified for the Intent that launched the
+     * Activity, and if so attempts to launch to that URL. If not, reads the
      * "android.support.customtabs.trusted.DEFAULT_URL" metadata from the manifest.
      * <p>
      * Override this for special handling (such as ignoring or sanitising data from the Intent).
@@ -416,7 +439,7 @@ public class LauncherActivity extends Activity {
     protected Uri getLaunchingUrl() {
         Uri defaultUrl = Uri.parse(mMetadata.defaultUrl);
 
-        Uri intentUrl = getIntent().getData();
+        Uri intentUrl = getUrlForIntent(getIntent());
 
         if (intentUrl != null) {
             Map<String, Uri> protocolHandlers = getProtocolHandlers();
