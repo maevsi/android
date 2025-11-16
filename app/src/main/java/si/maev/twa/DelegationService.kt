@@ -3,7 +3,6 @@ package si.maev.twa
 import android.app.Notification
 import android.app.NotificationChannel
 import android.app.NotificationManager
-import android.content.Context
 import android.os.Build
 import com.google.androidbrowserhelper.locationdelegation.LocationDelegationExtraCommandHandler
 
@@ -19,7 +18,7 @@ class DelegationService : com.google.androidbrowserhelper.trusted.DelegationServ
         platformTag: String, platformId: Int, notification: Notification, channelName: String
     ): Boolean {
         val mNotificationManager: NotificationManager =
-            getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
+            getSystemService(NOTIFICATION_SERVICE) as NotificationManager
         var notificationBuilt = notification
 
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
