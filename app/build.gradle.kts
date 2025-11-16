@@ -87,7 +87,7 @@ android {
 
     defaultConfig {
         applicationId = "si.maev.twa"
-        minSdk = 21
+        minSdk = 23
         targetSdk = 36
         versionCode = 10
         versionName = "0.1.4"
@@ -241,7 +241,7 @@ android {
 dependencies {
     implementation("com.google.androidbrowserhelper:locationdelegation:1.1.2")
 //    implementation 'com.google.androidbrowserhelper:billing:1.0.0-alpha10'
-    implementation("com.google.androidbrowserhelper:androidbrowserhelper:2.6.2")
+    implementation("com.google.androidbrowserhelper:androidbrowserhelper:2.7.0-alpha03") // Alpha version adds edge-to-edge support which removes a warning in Play console
 }
 
 tasks.register("generateShortcutsFile") {

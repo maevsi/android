@@ -143,6 +143,9 @@ public class LauncherActivity extends Activity {
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
+        WindowCompat.enableEdgeToEdge(getWindow());
+        getWindow().addFlags(WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS);
+
         mStartupUptimeMillis = SystemClock.uptimeMillis();
         sLauncherActivitiesAlive++;
         boolean twaAlreadyRunning = sLauncherActivitiesAlive > 1;
@@ -236,6 +239,7 @@ public class LauncherActivity extends Activity {
                         .setColorSchemeParams(
                                 CustomTabsIntent.COLOR_SCHEME_DARK, darkModeColorScheme)
                         .setDisplayMode(getDisplayMode())
+                        .setDisplayOverrideList(mMetadata.displayOverrideList)
                         .setScreenOrientation(mMetadata.screenOrientation)
                         .setLaunchHandlerClientMode(mMetadata.launchHandlerClientMode);
 
