@@ -59,7 +59,7 @@ object TwaManifest {
     // "customtabs" and "webview".
     const val fallbackType = "customtabs"
     const val enableSiteSettingsShortcut = "true"
-    // const val orientation = "any" // Disabled to respect system's rotation setting
+    const val orientation = "default" // `any` disables the user's orientation lock, that's why we stick with `default`
     const val launchHandlerClientMode = "auto"
 //    val displayOverride = arrayOf("window-controls-overlay", "standalone", "browser") // Hardcoded in string resources
 }
@@ -182,7 +182,7 @@ android {
         resValue("string", "generatorApp", TwaManifest.generatorApp)
         resValue("string", "fallbackType", TwaManifest.fallbackType)
         resValue("bool", "enableSiteSettingsShortcut", TwaManifest.enableSiteSettingsShortcut)
-        // resValue("string", "orientation", TwaManifest.orientation) // Disabled to respect system's rotation setting
+        resValue("string", "orientation", TwaManifest.orientation)
         resValue("string", "launchHandlerClientMode", TwaManifest.launchHandlerClientMode)
         // resValue("string-array", "display_override", TwaManifest.displayOverride.joinToString(prefix = "{", postfix = "}", transform = { s -> "\"$s\"" })) // Hardcoded in string resources
 
