@@ -1,0 +1,23 @@
+maevsi/android
+Copyright (c) 2023–present maevsi UG (haftungsbeschränkt)
+
+This product includes software developed by third parties and licensed under the
+Apache License, Version 2.0.
+
+-------------------------------------------------------------------------------
+Included Apache-2.0 Components
+-------------------------------------------------------------------------------
+
+1. android-browser-helper
+    Copyright 2018-present Google Inc.
+    https://github.com/GoogleChrome/android-browser-helper
+    Location: `app/src/main/java/si/maev/twa/androidbrowserhelper`
+
+-------------------------------------------------------------------------------
+Modifications by maevsi UG (haftungsbeschränkt)
+-------------------------------------------------------------------------------
+
+Modification highlights (non-exhaustive):
+    - Disabling skipping of client warmup
+    - Adding a `getIntent` function for customizing a `TrustedWebActivityIntent`
+    - Reformatting
