@@ -18,6 +18,5 @@ Modifications by maevsi UG (haftungsbeschränkt)
 -------------------------------------------------------------------------------
 
 Modification highlights (non-exhaustive):
-    - Disabling skipping of client warmup
     - Adding a `getIntent` function for customizing a `TrustedWebActivityIntent`
     - Reformatting

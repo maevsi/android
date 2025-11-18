@@ -38,6 +38,7 @@ import androidx.browser.trusted.TrustedWebActivityIntent;
 import androidx.browser.trusted.TrustedWebActivityIntentBuilder;
 
 import com.google.androidbrowserhelper.BuildConfig;
+import com.google.androidbrowserhelper.trusted.ChromeLegacyUtils;
 import com.google.androidbrowserhelper.trusted.ChromeOsSupport;
 import com.google.androidbrowserhelper.trusted.FocusActivity;
 import com.google.androidbrowserhelper.trusted.LauncherActivityMetadata;
@@ -372,12 +373,10 @@ public class TwaLauncher {
         @Override
         public void onCustomTabsServiceConnected(@NonNull ComponentName componentName,
                                                  @NonNull CustomTabsClient client) {
-//            // Skipping warmup breaks relationship validation.
-//            // This broken validation prevents custom headers from being sent while the ui still looks valid (no url bar shown).
-//            if (!ChromeLegacyUtils
-//                    .supportsLaunchWithoutWarmup(mContext.getPackageManager(), mProviderPackage)) {
-            client.warmup(0);
-//            }
+            if (!ChromeLegacyUtils
+                    .supportsLaunchWithoutWarmup(mContext.getPackageManager(), mProviderPackage)) {
+                client.warmup(0);
+            }
 
             try {
                 mSession = client.newSession(mCustomTabsCallback, mSessionId);
