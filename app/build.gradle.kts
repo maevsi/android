@@ -1,14 +1,12 @@
 import com.android.build.gradle.internal.tasks.factory.dependsOn
 import groovy.util.IndentPrinter
 import groovy.xml.MarkupBuilder
-import org.jetbrains.kotlin.gradle.dsl.JvmTarget
 import java.io.FileInputStream
 import java.io.StringWriter
 import java.util.Properties
 
 plugins {
-    id("com.android.application")
-    id("org.jetbrains.kotlin.android")
+    alias(libs.plugins.android.application)
 }
 
 val keystorePropertiesFile: File = rootProject.file("keystore.properties")
@@ -83,7 +81,9 @@ android {
     }
 
     namespace = "si.maev.twa"
-    compileSdk = 36
+    compileSdk {
+        version = release(36)
+    }
 
     defaultConfig {
         applicationId = "si.maev.twa"
@@ -204,11 +204,15 @@ android {
         null
     }
 
+    buildFeatures {
+        resValues = true
+    }
+
     buildTypes {
         release {
-            proguardFiles(
-                getDefaultProguardFile("proguard-android-optimize.txt"), "proguard-rules.pro"
-            )
+//            proguardFiles(
+//                getDefaultProguardFile("proguard-android-optimize.txt"), "proguard-rules.pro"
+//            )
             ndk {
                 debugSymbolLevel = "FULL"
             }
@@ -225,12 +229,6 @@ android {
         targetCompatibility = JavaVersion.VERSION_21
     }
 
-    kotlin {
-        compilerOptions {
-            jvmTarget = JvmTarget.JVM_21
-        }
-    }
-
     packaging {
         resources {
             excludes += "/META-INF/{AL2.0,LGPL2.1}"
@@ -239,9 +237,9 @@ android {
 }
 
 dependencies {
-    implementation("com.google.androidbrowserhelper:locationdelegation:1.1.2")
-//    implementation 'com.google.androidbrowserhelper:billing:1.0.0-alpha10'
-    implementation("com.google.androidbrowserhelper:androidbrowserhelper:2.7.0-alpha03") // Alpha version adds edge-to-edge support which removes a warning in Play console
+    implementation(libs.androidbrowserhelper)
+//    implementation(libs.androidbrowserhelper.billing)
+    implementation(libs.androidbrowserhelper.locationdelegation)
 }
 
 tasks.register("generateShortcutsFile") {
