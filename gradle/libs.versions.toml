@@ -1,0 +1,13 @@
+[versions]
+agp = "9.0.0"
+abh = "2.7.0-alpha03" # Alpha version adds edge-to-edge support which removes a warning in Play console
+#abhBilling = "1.1.0"
+abhLocationDelegation = "1.1.2"
+
+[libraries]
+androidbrowserhelper = { group = "com.google.androidbrowserhelper", name = "androidbrowserhelper", version.ref = "abh" }
+#androidbrowserhelper-billing = { group = "com.google.androidbrowserhelper", name = "billing", version.ref = "abhBilling" }
+androidbrowserhelper-locationdelegation = { group = "com.google.androidbrowserhelper", name = "locationdelegation", version.ref = "abhLocationDelegation" }
+
+[plugins]
+android-application = { id = "com.android.application", version.ref = "agp" }
