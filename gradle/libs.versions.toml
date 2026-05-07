@@ -1,6 +1,6 @@
 [versions]
 agp = "9.2.1"
-abh = "2.7.0" # Alpha version adds edge-to-edge support which removes a warning in Play console
+abh = "2.7.1" # Alpha version adds edge-to-edge support which removes a warning in Play console
 #abhBilling = "1.1.0"
 abhLocationDelegation = "1.1.2"
 
