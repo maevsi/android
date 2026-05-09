@@ -89,8 +89,8 @@ android {
         applicationId = "si.maev.twa"
         minSdk = 23
         targetSdk = 36
-        versionCode = 13
-        versionName = "0.2.2"
+        versionCode = 14
+        versionName = "0.3.0"
 
         // The name for the application
         resValue("string", "appName", TwaManifest.name)
