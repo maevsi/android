@@ -17,14 +17,24 @@
 
 package si.maev.twa.androidbrowserhelper;
 
+
+import static androidx.appcompat.R.style.Theme_AppCompat_DayNight_Dialog_Alert;
+
+import android.app.Activity;
 import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
+import android.content.pm.PackageManager;
+import android.content.pm.ResolveInfo;
 import android.net.Uri;
+import android.text.TextUtils;
 import android.util.Log;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.annotation.VisibleForTesting;
+import androidx.appcompat.app.AlertDialog;
+import androidx.appcompat.view.ContextThemeWrapper;
 import androidx.browser.customtabs.CustomTabsCallback;
 import androidx.browser.customtabs.CustomTabsClient;
 import androidx.browser.customtabs.CustomTabsIntent;
@@ -38,6 +48,7 @@ import androidx.browser.trusted.TrustedWebActivityIntent;
 import androidx.browser.trusted.TrustedWebActivityIntentBuilder;
 
 import com.google.androidbrowserhelper.BuildConfig;
+import com.google.androidbrowserhelper.R;
 import com.google.androidbrowserhelper.trusted.ChromeLegacyUtils;
 import com.google.androidbrowserhelper.trusted.ChromeOsSupport;
 import com.google.androidbrowserhelper.trusted.FocusActivity;
@@ -48,6 +59,8 @@ import com.google.androidbrowserhelper.trusted.SharedPreferencesTokenStore;
 import com.google.androidbrowserhelper.trusted.TwaProviderPicker;
 import com.google.androidbrowserhelper.trusted.WebViewFallbackActivity;
 import com.google.androidbrowserhelper.trusted.splashscreens.SplashScreenStrategy;
+
+import java.util.List;
 
 /**
  * Encapsulates the steps necessary to launch a Trusted Web Activity, such as establishing a
@@ -64,8 +77,52 @@ public class TwaLauncher {
     private static final String EXTRA_ANDROID_BROWSER_HELPER_VERSION =
             "org.chromium.chrome.browser.ANDROID_BROWSER_HELPER_VERSION";
 
+
+    /**
+     * Strategy for showing a dialog when no browser is available. Interface exists just to
+     * facilitate unit testing.
+     */
+    public interface BrowserUnavailableDialogStrategy {
+        void show(Activity activity, boolean queryInstalledBrowsers, @Nullable String browserName);
+    }
+
+    private static BrowserUnavailableDialogStrategy sDialogStrategy =
+            TwaLauncher::showBrowserUnavailableDialog;
+
+    /**
+     * For testing: allows mocking the dialog show.
+     */
+    @VisibleForTesting
+    public static void setDialogStrategyForTesting(BrowserUnavailableDialogStrategy strategy) {
+        sDialogStrategy = strategy;
+    }
+
+    /**
+     * Returns a FallbackStrategy that shows the browser unavailable dialog with the specified browser name.
+     */
+    public static FallbackStrategy getBlockedDialogFallbackStrategy(@Nullable String browserName) {
+        return (context, twaBuilder, providerPackage, completionCallback) -> {
+            if (context instanceof Activity) {
+                sDialogStrategy.show((Activity) context, false, browserName);
+            } else {
+                Log.e(TAG, "Cannot show browser unavailable dialog without an Activity context.");
+            }
+        };
+    }
+
     public static final FallbackStrategy CCT_FALLBACK_STRATEGY =
             (context, twaBuilder, providerPackage, completionCallback) -> {
+                if (providerPackage == null) {
+                    providerPackage = CustomTabsClient.getPackageName(context, null);
+                }
+                if (providerPackage == null) {
+                    if (context instanceof Activity) {
+                        sDialogStrategy.show((Activity) context, true, null);
+                    } else {
+                        Log.e(TAG, "Cannot show browser unavailable dialog without an Activity context.");
+                    }
+                    return;
+                }
                 // CustomTabsIntent will fall back to launching the Browser if there are no Custom Tabs
                 // providers installed.
                 CustomTabsIntent intent = twaBuilder.buildCustomTabsIntent();
@@ -278,8 +335,11 @@ public class TwaLauncher {
 
         mServiceConnection.setSessionCreationRunnables(
                 onSessionCreatedRunnable, onSessionCreationFailedRunnable);
-        CustomTabsClient.bindCustomTabsServicePreservePriority(
+        boolean bound = CustomTabsClient.bindCustomTabsServicePreservePriority(
                 mContext, mProviderPackage, mServiceConnection);
+        if (!bound) {
+            onSessionCreationFailedRunnable.run();
+        }
     }
 
     private void launchWhenSessionEstablished(TrustedWebActivityIntentBuilder twaBuilder,
@@ -353,6 +413,50 @@ public class TwaLauncher {
      */
     public void setStartupUptimeMillis(long startupUptimeMillis) {
         mStartupUptimeMillis = startupUptimeMillis;
+    }
+
+    /**
+     * Shows a dialog explaining that no browser is available to open the URL.
+     *
+     * @param activity               The {@link Activity} used to show the dialog.
+     * @param queryInstalledBrowsers Whether to query the system for installed browsers to determine the browser name.
+     * @param browserName            The name of the browser to display, if known.
+     */
+    private static void showBrowserUnavailableDialog(Activity activity, boolean queryInstalledBrowsers, @Nullable String browserName) {
+        if (queryInstalledBrowsers) {
+            PackageManager pm = activity.getPackageManager();
+
+            // Query for all browsers that can handle a standard URL. This allows us to find the
+            // user's preferred browser to provide a helpful name in the dialog.
+            Intent queryBrowsersIntent = new Intent()
+                    .setAction(Intent.ACTION_VIEW)
+                    .addCategory(Intent.CATEGORY_BROWSABLE)
+                    .setData(Uri.fromParts("http", "", null));
+
+            List<ResolveInfo> allBrowsers = pm.queryIntentActivities(queryBrowsersIntent,
+                    PackageManager.MATCH_DEFAULT_ONLY | PackageManager.MATCH_UNINSTALLED_PACKAGES);
+
+            browserName = activity.getString(R.string.provider_unavailable_default_browser);
+            if (!allBrowsers.isEmpty()) {
+                // The list is ordered from best to worst match, so we pick the first one.
+                browserName = allBrowsers.get(0).loadLabel(pm).toString();
+            }
+        }
+
+        AlertDialog.Builder builder = new AlertDialog.Builder(
+                new ContextThemeWrapper(activity, Theme_AppCompat_DayNight_Dialog_Alert));
+        builder.setTitle(R.string.provider_unavailable_title);
+
+        if (TextUtils.isEmpty(browserName)) {
+            builder.setMessage(activity.getString(R.string.provider_unavailable_fallback_message));
+        } else {
+            builder.setMessage(activity.getString(R.string.provider_unavailable_message, browserName));
+        }
+
+        builder.setPositiveButton(R.string.provider_unavailable_button_ok, (dialog, which) -> dialog.dismiss())
+                .setCancelable(true);
+        builder.setOnDismissListener(dialog -> activity.finish());
+        builder.show();
     }
 
     private class TwaCustomTabsServiceConnection extends CustomTabsServiceConnection {
