@@ -218,6 +218,7 @@ android {
             }
             signingConfig = signingConfigUpload
             isMinifyEnabled = true
+            isShrinkResources = true
         }
         debug {
             signingConfig = signingConfigDebug
