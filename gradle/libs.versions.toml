@@ -1,6 +1,6 @@
 [versions]
 agp = "9.3.1"
-abh = "2.7.2"
+abh = "2.7.3"
 #abhBilling = "1.1.0"
 abhLocationDelegation = "1.1.2"
 
