@@ -87,7 +87,7 @@ android {
 
     defaultConfig {
         applicationId = "si.maev.twa"
-        minSdk = 23
+        minSdk = 24
         targetSdk = 36
         versionCode = 15
         versionName = "0.3.1"
