@@ -31,5 +31,5 @@ jobs:
         cache: gradle
         distribution: temurin
         java-version: 25.0.5+8.0.LTS
-    - name: Build with Gradle
-      run: ./gradlew testDebugUnitTest
+    - name: Lint and build the release variant
+      run: ./gradlew lint assembleRelease
