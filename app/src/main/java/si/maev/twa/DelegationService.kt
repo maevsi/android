@@ -8,7 +8,6 @@ import com.google.androidbrowserhelper.locationdelegation.LocationDelegationExtr
 
 
 class DelegationService : com.google.androidbrowserhelper.trusted.DelegationService() {
-    @Override
     override fun onCreate() {
         super.onCreate()
         registerExtraCommandHandler(LocationDelegationExtraCommandHandler())
@@ -21,14 +20,19 @@ class DelegationService : com.google.androidbrowserhelper.trusted.DelegationServ
             getSystemService(NOTIFICATION_SERVICE) as NotificationManager
         var notificationBuilt = notification
 
+        // The browser treats `true` as "shown", so a blocked notification must report `false`.
+        if (!mNotificationManager.areNotificationsEnabled()) return false
+
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
             val builder: Notification.Builder =
                 Notification.Builder.recoverBuilder(this, notification)
+            // The channel name doubles as its id; changing the id would leave installed apps with a second channel of the same name.
             builder.setChannelId(channelName)
             val channel = NotificationChannel(
                 channelName, channelName, NotificationManager.IMPORTANCE_HIGH
             )
             mNotificationManager.createNotificationChannel(channel)
+            if (mNotificationManager.getNotificationChannel(channelName)?.importance == NotificationManager.IMPORTANCE_NONE) return false
             notificationBuilt = builder.setSubText("").build()
         }
         mNotificationManager.notify(platformTag, platformId, notificationBuilt)
