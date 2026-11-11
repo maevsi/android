@@ -33,3 +33,52 @@ jobs:
         java-version: 25.0.5+8.0.LTS
     - name: Lint and build the release variant
       run: ./gradlew lint assembleRelease
+  release_semantic:
+    needs: build
+    if: github.event_name == 'push'
+    name: Release (semantic)
+    uses: dargmuesli/github-actions/.github/workflows/release-semantic.yml@66040b4567381bad6e0b9a68caa17643e1d365bd # 5.10.0
+    permissions:
+      contents: write
+      id-token: write
+    secrets:
+      PERSONAL_ACCESS_TOKEN: ${{ secrets.PERSONAL_ACCESS_TOKEN }}
+    with:
+      EXTRA_PLUGINS: |
+        semantic-release-replace-plugin
+  release:
+    needs: release_semantic
+    if: needs.release_semantic.outputs.new_release_version != null
+    name: Sign and release to Google Play
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+    steps:
+    - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+      with:
+        ref: ${{ needs.release_semantic.outputs.new_release_version }}
+    - name: Set up JDK
+      uses: actions/setup-java@77dd5b2ce225ea11469928ac317850245a74ae78 # v6.2.0
+      with:
+        cache: gradle
+        distribution: temurin
+        java-version: 25.0.5+8.0.LTS
+    - name: Build the signed release bundle
+      env:
+        UPLOAD_KEY_PASSWORD: ${{ secrets.UPLOAD_KEY_PASSWORD }}
+        UPLOAD_KEYSTORE_BASE64: ${{ secrets.UPLOAD_KEYSTORE_BASE64 }}
+        UPLOAD_KEYSTORE_PASSWORD: ${{ secrets.UPLOAD_KEYSTORE_PASSWORD }}
+      run: |
+        echo "$UPLOAD_KEYSTORE_BASE64" | base64 --decode > "$RUNNER_TEMP/upload.jks"
+        ./gradlew bundleRelease \
+          -Pandroid.injected.signing.store.file="$RUNNER_TEMP/upload.jks" \
+          -Pandroid.injected.signing.store.password="$UPLOAD_KEYSTORE_PASSWORD" \
+          -Pandroid.injected.signing.key.alias=upload \
+          -Pandroid.injected.signing.key.password="$UPLOAD_KEY_PASSWORD"
+    - name: Upload to Google Play
+      uses: r0adkll/upload-google-play@e738b9dd8f2476ea806d921b64aacd24f34515a5 # v1.1.5
+      with:
+        packageName: si.maev.twa
+        releaseFiles: app/build/outputs/bundle/release/app-release.aab
+        serviceAccountJsonPlainText: ${{ secrets.PLAY_SERVICE_ACCOUNT_JSON }}
+        track: internal

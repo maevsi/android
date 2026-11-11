@@ -112,8 +112,11 @@ android {
         applicationId = "si.maev.twa"
         minSdk = 24
         targetSdk = 36
-        versionCode = 16
         versionName = "0.4.0"
+        // Google Play rejects a versionCode that does not grow, which happens here once minor or patch
+        // reaches 100 and between prereleases of one version. Widen the factors before that.
+        versionCode = versionName!!.substringBefore('-').split('.').map(String::toInt)
+            .let { (major, minor, patch) -> major * 10000 + minor * 100 + patch }
 
         // The name for the application
         resValue("string", "appName", TwaManifest.name)
