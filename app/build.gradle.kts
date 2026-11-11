@@ -64,7 +64,14 @@ object TwaManifest {
     // - short_name: Shorter string used if |name| is too long.
     // - url: Absolute path of the URL to launch the app with (e.g "/create").
     // - icon: Name of the resource in the drawable folder to use as an icon.
-    val shortcuts = arrayOf<Shortcut>()
+    val shortcuts = arrayOf<Shortcut>(
+        object : Shortcut {
+            override val name = "Explore events"
+            override val shortName = "Events"
+            override val url = protocol + hostName + "/event"
+            override val icon = "shortcut_explore"
+        }
+    )
 
     // The duration of fade out animation in milliseconds to be played when removing splash screen.
     const val splashScreenFadeOutDuration = 300
