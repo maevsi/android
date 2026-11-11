@@ -1,4 +1,3 @@
-import com.android.build.gradle.internal.tasks.factory.dependsOn
 import groovy.util.IndentPrinter
 import groovy.xml.MarkupBuilder
 import java.io.FileInputStream
@@ -257,22 +256,22 @@ tasks.register("generateShortcutsFile") {
     val xmlMarkup = MarkupBuilder(IndentPrinter(xmlWriter, "    ", true))
 
     xmlMarkup.withGroovyBuilder {
-        "shortcuts"("xmlns:android=http://schemas.android.com/apk/res/android") {
+        "shortcuts"("xmlns:android" to "http://schemas.android.com/apk/res/android") {
             TwaManifest.shortcuts.forEachIndexed { i, s ->
                 "shortcut"(
-                    "android:shortcutId=shortcut$i",
-                    "android:enabled=true",
-                    "android:icon=@drawable/${s.icon}",
-                    "android:shortcutShortLabel=@string/shortcut_short_name_$i",
-                    "android:shortcutLongLabel=@string/shortcut_name_$i"
+                    "android:shortcutId" to "shortcut$i",
+                    "android:enabled" to "true",
+                    "android:icon" to "@drawable/${s.icon}",
+                    "android:shortcutShortLabel" to "@string/shortcut_short_name_$i",
+                    "android:shortcutLongLabel" to "@string/shortcut_name_$i"
                 ) {
                     "intent"(
-                        "android:action=android.intent.action.MAIN",
-                        "android:targetPackage=${TwaManifest.applicationId}",
-                        "android:targetClass=${TwaManifest.applicationId}.LauncherActivity",
-                        "android:data=${s.url}"
+                        "android:action" to "android.intent.action.MAIN",
+                        "android:targetPackage" to TwaManifest.applicationId,
+                        "android:targetClass" to "${TwaManifest.applicationId}.LauncherActivity",
+                        "android:data" to s.url
                     )
-                    "categories"("android:name=android.intent.category.LAUNCHER")
+                    "categories"("android:name" to "android.intent.category.LAUNCHER")
                 }
             }
         }
@@ -281,8 +280,6 @@ tasks.register("generateShortcutsFile") {
     shortcutsFile.writeText(xmlWriter.toString() + '\n')
 }
 
-tasks.withType<PublishToMavenRepository> {
+tasks.matching { it.name == "preBuild" }.configureEach {
     dependsOn("generateShortcutsFile")
 }
-
-tasks.named("generateShortcutsFile").dependsOn(":preBuild")
