@@ -73,7 +73,6 @@ object TwaManifest {
     // The fallback strategy for when Trusted Web Activity is not available. Possible values are
     // "customtabs" and "webview".
     const val fallbackType = "customtabs"
-    const val enableSiteSettingsShortcut = "true"
     const val orientation = "default" // `any` disables the user's orientation lock, that's why we stick with `default`
     const val launchHandlerClientMode = "auto"
 //    val displayOverride = arrayOf("window-controls-overlay", "standalone", "browser") // Hardcoded in string resources
@@ -127,9 +126,6 @@ android {
             "webManifestUrl",
             TwaManifest.protocol + TwaManifest.hostName + "/manifest.webmanifest"
         )
-
-        // This is used by Meta Quest.
-        resValue("string", "fullScopeUrl", TwaManifest.protocol + TwaManifest.hostName + "/")
 
         // The hostname is used when building the intent-filter, so the TWA is able to
         // handle Intents to open host url of the application.
@@ -198,7 +194,6 @@ android {
         )
         resValue("string", "generatorApp", TwaManifest.generatorApp)
         resValue("string", "fallbackType", TwaManifest.fallbackType)
-        resValue("bool", "enableSiteSettingsShortcut", TwaManifest.enableSiteSettingsShortcut)
         resValue("string", "orientation", TwaManifest.orientation)
         resValue("string", "launchHandlerClientMode", TwaManifest.launchHandlerClientMode)
         // resValue("string-array", "display_override", TwaManifest.displayOverride.joinToString(prefix = "{", postfix = "}", transform = { s -> "\"$s\"" })) // Hardcoded in string resources
@@ -227,9 +222,6 @@ android {
 
     buildTypes {
         release {
-//            proguardFiles(
-//                getDefaultProguardFile("proguard-android-optimize.txt"), "proguard-rules.pro"
-//            )
             ndk {
                 debugSymbolLevel = "FULL"
             }
@@ -256,17 +248,16 @@ android {
 
 dependencies {
     implementation(libs.androidbrowserhelper)
-//    implementation(libs.androidbrowserhelper.billing)
     implementation(libs.androidbrowserhelper.locationdelegation)
 }
 
 tasks.register("generateShortcutsFile") {
-    assert(TwaManifest.shortcuts.size < 5) { "You can have at most 4 shortcuts." }
+    require(TwaManifest.shortcuts.size < 5) { "You can have at most 4 shortcuts." }
     TwaManifest.shortcuts.forEachIndexed { i, s ->
-        assert(s.name != null) { "Missing `name` in shortcut #$i" }
-        assert(s.shortName != null) { "Missing `short_name` in shortcut #$i" }
-        assert(s.url != null) { "Missing `icon` in shortcut #$i" }
-        assert(s.icon != null) { "Missing `url` in shortcut #$i" }
+        requireNotNull(s.name) { "Missing `name` in shortcut #$i" }
+        requireNotNull(s.shortName) { "Missing `short_name` in shortcut #$i" }
+        requireNotNull(s.url) { "Missing `url` in shortcut #$i" }
+        requireNotNull(s.icon) { "Missing `icon` in shortcut #$i" }
     }
 
     val shortcutsFile = File("$projectDir/src/main/res/xml/shortcuts.xml")
