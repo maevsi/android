@@ -1,12 +1,10 @@
 [versions]
 agp = "9.5.1"
 abh = "2.7.4"
-#abhBilling = "1.1.0"
 abhLocationDelegation = "1.1.2"
 
 [libraries]
 androidbrowserhelper = { group = "com.google.androidbrowserhelper", name = "androidbrowserhelper", version.ref = "abh" }
-#androidbrowserhelper-billing = { group = "com.google.androidbrowserhelper", name = "billing", version.ref = "abhBilling" }
 androidbrowserhelper-locationdelegation = { group = "com.google.androidbrowserhelper", name = "locationdelegation", version.ref = "abhLocationDelegation" }
 
 [plugins]
