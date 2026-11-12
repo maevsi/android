@@ -41,23 +41,25 @@ interface Shortcut {
 }
 
 object TwaManifest {
-    const val applicationId = "si.maev.twa"
-    const val protocol = "https://"
-    const val hostName = "vibetype.app" // The domain being opened in the TWA.
-    const val launchPath =
+    @Suppress("CanBeConst")
+    val applicationId = "si.maev.twa"
+    @Suppress("CanBeConst")
+    val protocol = "https://"
+    val hostName = "vibetype.app" // The domain being opened in the TWA.
+    val launchPath =
         "/?source=pwa" // The start path for the TWA. Must be relative to the domain.
-    const val name = "Vibetype" // The application name.
-    const val launcherName = "Vibetype" // The name shown on the Android Launcher.
-    const val themeColor = "#ffffff" // The color used for the status bar.
-    const val themeColorDark = "#191911" // The color used for the dark status bar.
-    const val navigationColor = themeColor // The color used for the navigation bar.
-    const val navigationColorDark = themeColorDark // The color used for the dark navbar.
-    const val navigationDividerColor = themeColor // The navbar divider color.
-    const val navigationDividerColorDark = themeColorDark // The dark navbar divider color.
-    const val backgroundColor = themeColorDark // The color used for the splash screen background.
-    const val startChromeBeforeAnimationComplete =
+    val name = "Vibetype" // The application name.
+    val launcherName = "Vibetype" // The name shown on the Android Launcher.
+    val themeColor = "#ffffff" // The color used for the status bar.
+    val themeColorDark = "#191911" // The color used for the dark status bar.
+    val navigationColor = themeColor // The color used for the navigation bar.
+    val navigationColorDark = themeColorDark // The color used for the dark navbar.
+    val navigationDividerColor = themeColor // The navbar divider color.
+    val navigationDividerColorDark = themeColorDark // The dark navbar divider color.
+    val backgroundColor = themeColorDark // The color used for the splash screen background.
+    val startChromeBeforeAnimationComplete =
         true // Set to true to start chrome before the splash screen animation is complete.
-    const val enableNotifications = true // Set to true to enable notification delegation.
+    val enableNotifications = true // Set to true to enable notification delegation.
 
     // Every shortcut must include the following fields:
     // - name: String that will show up in the shortcut.
@@ -68,20 +70,20 @@ object TwaManifest {
         object : Shortcut {
             override val name = "Explore events"
             override val shortName = "Events"
-            override val url = protocol + hostName + "/event"
+            override val url = "$protocol$hostName/event"
             override val icon = "shortcut_explore"
-        }
+        },
     )
 
     // The duration of fade out animation in milliseconds to be played when removing splash screen.
-    const val splashScreenFadeOutDuration = 300
-    const val generatorApp = "PWABuilder" // Application that generated the Android Project
+    val splashScreenFadeOutDuration = 300
+    val generatorApp = "PWABuilder" // Application that generated the Android Project
 
     // The fallback strategy for when Trusted Web Activity is not available. Possible values are
     // "customtabs" and "webview".
-    const val fallbackType = "customtabs"
-    const val orientation = "default" // `any` disables the user's orientation lock, that's why we stick with `default`
-    const val launchHandlerClientMode = "auto"
+    val fallbackType = "customtabs"
+    val orientation = "default" // `any` disables the user's orientation lock, that's why we stick with `default`
+    val launchHandlerClientMode = "auto"
 //    val displayOverride = arrayOf("window-controls-overlay", "standalone", "browser") // Hardcoded in string resources
 }
 
@@ -131,7 +133,7 @@ android {
         resValue(
             "string",
             "webManifestUrl",
-            TwaManifest.protocol + TwaManifest.hostName + "/manifest.webmanifest"
+            TwaManifest.protocol + TwaManifest.hostName + "/manifest.webmanifest",
         )
 
         // The hostname is used when building the intent-filter, so the TWA is able to
@@ -179,7 +181,7 @@ android {
         resValue(
             "bool",
             "startChromeBeforeAnimationComplete",
-            TwaManifest.startChromeBeforeAnimationComplete.toString()
+            TwaManifest.startChromeBeforeAnimationComplete.toString(),
         )
 
         // The enableNotification resource is used to enable or disable the
@@ -187,9 +189,10 @@ android {
         // attributes
         resValue("bool", "enableNotification", TwaManifest.enableNotifications.toString())
 
-        TwaManifest.shortcuts.forEachIndexed { index, shortcut ->
-            resValue("string", "shortcut_name_$index", "${shortcut.name}")
-            resValue("string", "shortcut_short_name_$index", "${shortcut.shortName}")
+        for (index in TwaManifest.shortcuts.indices) {
+            val shortcut = TwaManifest.shortcuts[index]
+            resValue("string", "shortcut_name_$index", shortcut.name.toString())
+            resValue("string", "shortcut_short_name_$index", shortcut.shortName.toString())
         }
 
         // The splashScreenFadeOutDuration resource is used to set the duration of fade out animation in milliseconds
@@ -259,6 +262,7 @@ dependencies {
 }
 
 tasks.register("generateShortcutsFile") {
+    description = "Generates res/xml/shortcuts.xml from the TwaManifest shortcuts."
     require(TwaManifest.shortcuts.size < 5) { "You can have at most 4 shortcuts." }
     TwaManifest.shortcuts.forEachIndexed { i, s ->
         requireNotNull(s.name) { "Missing `name` in shortcut #$i" }
