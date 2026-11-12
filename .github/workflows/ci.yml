@@ -63,22 +63,16 @@ jobs:
         cache: gradle
         distribution: temurin
         java-version: 25.0.5+8.0.LTS
-    - name: Build the signed release bundle
+    - name: Build, sign, and publish the release bundle to Google Play
       env:
+        ANDROID_PUBLISHER_CREDENTIALS: ${{ secrets.PLAY_SERVICE_ACCOUNT_JSON }}
         UPLOAD_KEY_PASSWORD: ${{ secrets.UPLOAD_KEY_PASSWORD }}
         UPLOAD_KEYSTORE_BASE64: ${{ secrets.UPLOAD_KEYSTORE_BASE64 }}
         UPLOAD_KEYSTORE_PASSWORD: ${{ secrets.UPLOAD_KEYSTORE_PASSWORD }}
       run: |
         echo "$UPLOAD_KEYSTORE_BASE64" | base64 --decode > "$RUNNER_TEMP/upload.jks"
-        ./gradlew bundleRelease \
+        ./gradlew publishReleaseBundle \
           -Pandroid.injected.signing.store.file="$RUNNER_TEMP/upload.jks" \
           -Pandroid.injected.signing.store.password="$UPLOAD_KEYSTORE_PASSWORD" \
           -Pandroid.injected.signing.key.alias=upload \
           -Pandroid.injected.signing.key.password="$UPLOAD_KEY_PASSWORD"
-    - name: Upload to Google Play
-      uses: r0adkll/upload-google-play@e738b9dd8f2476ea806d921b64aacd24f34515a5 # v1.1.5
-      with:
-        packageName: si.maev.twa
-        releaseFiles: app/build/outputs/bundle/release/app-release.aab
-        serviceAccountJsonPlainText: ${{ secrets.PLAY_SERVICE_ACCOUNT_JSON }}
-        track: internal

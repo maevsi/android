@@ -10,8 +10,8 @@ This app is a [trusted web activity](https://developer.chrome.com/docs/android/t
 ## Release
 
 A push to `main` runs [semantic-release](https://semantic-release.gitbook.io/), which derives the version from the commits and writes it to `versionName` in `app/build.gradle.kts`.
-The `versionCode` is computed from that version as `major * 10000 + minor * 100 + patch`.
-CI then signs the release bundle and uploads it to the internal testing track on Google Play.
+CI then signs the release bundle and publishes it to the internal testing track on Google Play with [Gradle Play Publisher](https://github.com/Triple-T/gradle-play-publisher).
+The plugin asks Google Play for the highest `versionCode` in use and publishes with the next one, so the `versionCode` in `app/build.gradle.kts` only applies to local builds.
 
 This needs the following repository secrets:
 

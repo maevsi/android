@@ -16,6 +16,7 @@
  * This file has been modified from the original.
  */
 
+import com.github.triplet.gradle.androidpublisher.ResolutionStrategy
 import groovy.util.IndentPrinter
 import groovy.xml.MarkupBuilder
 import java.io.FileInputStream
@@ -24,6 +25,7 @@ import java.util.Properties
 
 plugins {
     alias(libs.plugins.android.application)
+    alias(libs.plugins.play.publisher)
 }
 
 val keystorePropertiesFile: File = rootProject.file("keystore.properties")
@@ -112,11 +114,9 @@ android {
         applicationId = "si.maev.twa"
         minSdk = 24
         targetSdk = 36
+        // Only local builds keep this value. The `play` block below replaces it on publish.
+        versionCode = 1
         versionName = "0.4.0"
-        // Google Play rejects a versionCode that does not grow, which happens here once minor or patch
-        // reaches 100 and between prereleases of one version. Widen the factors before that.
-        versionCode = versionName!!.substringBefore('-').split('.').map(String::toInt)
-            .let { (major, minor, patch) -> major * 10000 + minor * 100 + patch }
 
         // The name for the application
         resValue("string", "appName", TwaManifest.name)
@@ -254,6 +254,15 @@ android {
             excludes += "/META-INF/{AL2.0,LGPL2.1}"
         }
     }
+}
+
+play {
+    // AUTO asks Google Play for the highest versionCode on every release build and publishes with
+    // the next one, which fails without credentials, so builds that cannot publish leave it off.
+    enabled.set(System.getenv("ANDROID_PUBLISHER_CREDENTIALS") != null)
+    defaultToAppBundles.set(true)
+    resolutionStrategy.set(ResolutionStrategy.AUTO)
+    track.set("internal")
 }
 
 dependencies {

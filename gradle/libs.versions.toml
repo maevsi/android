@@ -2,6 +2,7 @@
 agp = "9.5.1"
 abh = "2.7.4"
 abhLocationDelegation = "1.1.2"
+playPublisher = "4.1.2"
 
 [libraries]
 androidbrowserhelper = { group = "com.google.androidbrowserhelper", name = "androidbrowserhelper", version.ref = "abh" }
@@ -9,3 +10,4 @@ androidbrowserhelper-locationdelegation = { group = "com.google.androidbrowserhe
 
 [plugins]
 android-application = { id = "com.android.application", version.ref = "agp" }
+play-publisher = { id = "com.github.triplet.play", version.ref = "playPublisher" }
