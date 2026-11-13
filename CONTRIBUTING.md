@@ -56,6 +56,8 @@ Run these once, with a Google Cloud project that is linked to the Play Console.
 Replace `PROJECT_ID` with the project ID.
 
 ```sh
+gcloud services enable androidpublisher.googleapis.com iamcredentials.googleapis.com --project=PROJECT_ID
+
 PROJECT_NUMBER=$(gcloud projects describe PROJECT_ID --format='value(projectNumber)')
 
 gcloud iam workload-identity-pools create github \
