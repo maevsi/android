@@ -16,6 +16,7 @@
  * This file has been modified from the original.
  */
 
+import com.github.triplet.gradle.androidpublisher.ResolutionStrategy
 import groovy.util.IndentPrinter
 import groovy.xml.MarkupBuilder
 import java.io.FileInputStream
@@ -24,6 +25,7 @@ import java.util.Properties
 
 plugins {
     alias(libs.plugins.android.application)
+    alias(libs.plugins.play.publisher)
 }
 
 val keystorePropertiesFile: File = rootProject.file("keystore.properties")
@@ -114,7 +116,8 @@ android {
         applicationId = "si.maev.twa"
         minSdk = 24
         targetSdk = 36
-        versionCode = 16
+        // Only local builds keep this value. The `play` block below replaces it on publish.
+        versionCode = 1
         versionName = "0.4.0"
 
         // The name for the application
@@ -254,6 +257,18 @@ android {
             excludes += "/META-INF/{AL2.0,LGPL2.1}"
         }
     }
+}
+
+play {
+    // AUTO asks Google Play for the highest versionCode on every release build and publishes with
+    // the next one, which fails without credentials, so builds that cannot publish leave it off.
+    // The google-github-actions/auth step in CI sets GOOGLE_APPLICATION_CREDENTIALS to a
+    // Workload Identity Federation config, which Application Default Credentials picks up.
+    enabled.set(System.getenv("GOOGLE_APPLICATION_CREDENTIALS") != null)
+    useApplicationDefaultCredentials.set(true)
+    defaultToAppBundles.set(true)
+    resolutionStrategy.set(ResolutionStrategy.AUTO)
+    track.set("internal")
 }
 
 dependencies {

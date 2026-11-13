@@ -7,6 +7,8 @@
 
 This app is a [trusted web activity](https://developer.chrome.com/docs/android/trusted-web-activity/).
 
+To build the app or publish a release, read [CONTRIBUTING.md](CONTRIBUTING.md).
+
 ## License
 
 This project is licensed under the [Apache License 2.0](LICENSE).

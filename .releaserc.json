@@ -1,0 +1,48 @@
+{
+    "plugins": [
+        [
+            "@semantic-release/commit-analyzer",
+            {
+                "preset": "conventionalcommits",
+                "presetConfig": {}
+            }
+        ],
+        [
+            "@semantic-release/release-notes-generator",
+            {
+                "preset": "conventionalcommits",
+                "presetConfig": {}
+            }
+        ],
+        "@semantic-release/changelog",
+        [
+            "semantic-release-replace-plugin",
+            {
+                "replacements": [
+                    {
+                        "countMatches": true,
+                        "files": ["app/build.gradle.kts"],
+                        "from": "versionName = \"[^\"]+\"",
+                        "to": "versionName = \"${nextRelease.version}\"",
+                        "results": [
+                            {
+                                "file": "app/build.gradle.kts",
+                                "hasChanged": true,
+                                "numMatches": 1,
+                                "numReplacements": 1
+                            }
+                        ]
+                    }
+                ]
+            }
+        ],
+        [
+            "@semantic-release/git",
+            {
+                "assets": ["CHANGELOG.md", "app/build.gradle.kts"]
+            }
+        ],
+        "@semantic-release/github"
+    ],
+    "tagFormat": "${version}"
+}
