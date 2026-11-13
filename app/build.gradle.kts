@@ -218,11 +218,6 @@ android {
         }
     }
 
-    val signingConfigDebug = if (keystorePropertiesFile.exists()) {
-        signingConfigs.getByName("debug")
-    } else {
-        null
-    }
     val signingConfigUpload = if (keystorePropertiesFile.exists()) {
         signingConfigs.getByName("upload")
     } else {
@@ -241,9 +236,6 @@ android {
             signingConfig = signingConfigUpload
             isMinifyEnabled = true
             isShrinkResources = true
-        }
-        debug {
-            signingConfig = signingConfigDebug
         }
     }
 
