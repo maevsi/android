@@ -4,24 +4,26 @@
 
 Build and lint the release variant with `./gradlew lint assembleRelease`, which is what CI runs.
 CI uses Temurin JDK 25.
-The debug build needs no signing setup.
+The debug build needs no signing setup and is signed with the default Android debug keystore.
 
 ## Local signing
 
 A signed release build needs a `keystore.properties` file in the repository root.
 The file is gitignored, so never commit it, and never commit the keystores it points to.
-It holds these keys:
+It must hold all of these keys, or the Gradle configuration fails:
 
 - `uploadStoreFile`, `uploadStorePassword`, `uploadKeyAlias`, `uploadKeyPassword`: the upload keystore
-- `debugStoreFile`, `debugStorePassword`, `debugKeyAlias`, `debugKeyPassword`: the debug keystore
+- `debugStoreFile`, `debugStorePassword`, `debugKeyAlias`, `debugKeyPassword`: the debug keystore, which then replaces the default one
 
+The two store file paths are relative to the `app` directory, not to the repository root.
 Without the file, release builds are unsigned.
 
 ## Release
 
-A push to `main` runs [semantic-release](https://semantic-release.gitbook.io/), which derives the version from the commits and writes it to `versionName` in `app/build.gradle.kts`.
+A push to `main`, `beta`, or `alpha` runs [semantic-release](https://semantic-release.gitbook.io/), which derives the version from the commits and writes it to `versionName` in `app/build.gradle.kts`.
 CI then signs the release bundle and publishes it to the production track on Google Play with [Gradle Play Publisher](https://github.com/Triple-T/gradle-play-publisher).
 The plugin asks Google Play for the highest `versionCode` in use and publishes with the next one, so the `versionCode` in `app/build.gradle.kts` only applies to local builds.
+Pushes to `beta` and `alpha` create prereleases, which CI publishes to the same track.
 
 Publishing authenticates with [Workload Identity Federation](https://cloud.google.com/iam/docs/workload-identity-federation), so CI holds no Google service account key.
 The release job gets a short-lived GitHub OIDC token, which Google exchanges for access to the service account.
@@ -30,10 +32,10 @@ The release job gets a short-lived GitHub OIDC token, which Google exchanges for
 
 The release job needs these repository secrets:
 
-- `UPLOAD_KEYSTORE_BASE64`: the upload keystore, encoded with `base64 -w0`, holding the key under the alias `upload`
+- `UPLOAD_KEYSTORE_BASE64`: the upload keystore, base64-encoded on a single line, holding the key under the alias `upload`
 - `UPLOAD_KEYSTORE_PASSWORD`: the password of the keystore
 - `UPLOAD_KEY_PASSWORD`: the password of the key
-- `PERSONAL_ACCESS_TOKEN`: optional, passed to the semantic-release job, which uses it to push commits and create releases
+- `PERSONAL_ACCESS_TOKEN`: the token semantic-release uses to push the release commit and create releases, which must belong to an account that may bypass the branch ruleset on `main` and `beta`
 
 It also needs these repository variables, which are identifiers and not secrets:
 
@@ -95,7 +97,7 @@ gh variable set GCP_PUBLISHER_SERVICE_ACCOUNT --repo maevsi/android \
 Set them with the GitHub CLI, which keeps the values out of your shell history:
 
 ```sh
-base64 -w0 upload.jks | gh secret set UPLOAD_KEYSTORE_BASE64 --repo maevsi/android
+base64 < upload.jks | tr -d '\n' | gh secret set UPLOAD_KEYSTORE_BASE64 --repo maevsi/android
 gh secret set UPLOAD_KEYSTORE_PASSWORD --repo maevsi/android
 gh secret set UPLOAD_KEY_PASSWORD --repo maevsi/android
 gh secret set PERSONAL_ACCESS_TOKEN --repo maevsi/android
