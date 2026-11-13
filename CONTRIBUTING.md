@@ -23,7 +23,7 @@ Without the file, release builds are unsigned.
 A push to `main`, `beta`, or `alpha` runs [semantic-release](https://semantic-release.gitbook.io/), which derives the version from the commits and writes it to `versionName` in `app/build.gradle.kts`.
 CI then signs the release bundle and publishes it to the production track on Google Play with [Gradle Play Publisher](https://github.com/Triple-T/gradle-play-publisher).
 The plugin asks Google Play for the highest `versionCode` in use and publishes with the next one, so the `versionCode` in `app/build.gradle.kts` only applies to local builds.
-Pushes to `beta` and `alpha` create prereleases, which CI publishes to the same track.
+Pushes to `beta` and `alpha` create prereleases on GitHub only, since CI publishes to Google Play from `main` alone.
 
 Publishing authenticates with [Workload Identity Federation](https://cloud.google.com/iam/docs/workload-identity-federation), so CI holds no Google service account key.
 The release job gets a short-lived GitHub OIDC token, which Google exchanges for access to the service account.

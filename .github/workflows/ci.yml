@@ -48,7 +48,7 @@ jobs:
         semantic-release-replace-plugin
   release:
     needs: release_semantic
-    if: needs.release_semantic.outputs.new_release_version != null
+    if: github.ref_name == 'main' && needs.release_semantic.outputs.new_release_version != null
     name: Sign and release to Google Play
     runs-on: ubuntu-latest
     permissions:
