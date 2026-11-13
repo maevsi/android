@@ -259,7 +259,10 @@ android {
 play {
     // AUTO asks Google Play for the highest versionCode on every release build and publishes with
     // the next one, which fails without credentials, so builds that cannot publish leave it off.
-    enabled.set(System.getenv("ANDROID_PUBLISHER_CREDENTIALS") != null)
+    // The google-github-actions/auth step in CI sets GOOGLE_APPLICATION_CREDENTIALS to a
+    // Workload Identity Federation config, which Application Default Credentials picks up.
+    enabled.set(System.getenv("GOOGLE_APPLICATION_CREDENTIALS") != null)
+    useApplicationDefaultCredentials.set(true)
     defaultToAppBundles.set(true)
     resolutionStrategy.set(ResolutionStrategy.AUTO)
     track.set("internal")
