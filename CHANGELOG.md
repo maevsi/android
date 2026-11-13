@@ -1,3 +1,9 @@
+## [0.5.1](https://github.com/maevsi/android/compare/0.5.0...0.5.1) (2026-11-13)
+
+### Bug Fixes
+
+* **ci:** trigger patch release ([c7fa392](https://github.com/maevsi/android/commit/c7fa3922cc2c86c64dc7530c407c837a4ca53df5))
+
 ## [0.5.0](https://github.com/maevsi/android/compare/0.4.0...0.5.0) (2026-11-13)
 
 ### Features
