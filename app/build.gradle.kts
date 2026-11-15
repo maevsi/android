@@ -134,7 +134,7 @@ android {
         resValue(
             "string",
             "fileHandlingActionUrl",
-            TwaManifest.protocol + TwaManifest.hostName + "/event/create",
+            TwaManifest.protocol + TwaManifest.hostName + "/event/import",
         )
 
         // The URL the Web Manifest for the Progressive Web App that the TWA points to. This
