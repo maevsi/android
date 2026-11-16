@@ -1,4 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<resources>
-    <string name="shortcut_name_0">Veranstaltungen entdecken</string>
+<resources xmlns:tools="http://schemas.android.com/tools">
+    <!-- The default is generated from the shortcuts in `app/build.gradle.kts`, which lint does not see. -->
+    <string name="shortcut_name_0" tools:ignore="ExtraTranslation">Veranstaltungen entdecken</string>
 </resources>
