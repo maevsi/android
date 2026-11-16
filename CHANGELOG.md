@@ -1,3 +1,9 @@
+## [0.6.0](https://github.com/maevsi/android/compare/0.5.1...0.6.0) (2026-11-16)
+
+### Features
+
+* **twa:** open calendar files and web+vibetype links ([#76](https://github.com/maevsi/android/issues/76)) ([8b999d8](https://github.com/maevsi/android/commit/8b999d81b5144158fb52da9df84ef185501f2387))
+
 ## [0.5.1](https://github.com/maevsi/android/compare/0.5.0...0.5.1) (2026-11-13)
 
 ### Bug Fixes
