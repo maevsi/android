@@ -130,6 +130,13 @@ android {
         val launchUrl = TwaManifest.protocol + TwaManifest.hostName + TwaManifest.launchPath
         resValue("string", "launchUrl", launchUrl)
 
+        // The web app's `file_handlers` action, which receives opened files through its `launchQueue`
+        resValue(
+            "string",
+            "fileHandlingActionUrl",
+            TwaManifest.protocol + TwaManifest.hostName + "/event/import",
+        )
+
         // The URL the Web Manifest for the Progressive Web App that the TWA points to. This
         // is used by Chrome OS and Meta Quest to open the Web version of the PWA instead of
         // the TWA, as it will probably give a better user experience for non-mobile devices.

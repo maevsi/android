@@ -116,6 +116,10 @@
                 android:value="@string/providerAuthority" />
 
             <meta-data
+                android:name="android.support.customtabs.trusted.FILE_HANDLING_ACTION_URL"
+                android:value="@string/fileHandlingActionUrl" />
+
+            <meta-data
                 android:name="android.support.customtabs.trusted.START_CHROME_BEFORE_ANIMATION_COMPLETE"
                 android:value="@bool/startChromeBeforeAnimationComplete" />
 
@@ -149,6 +153,25 @@
                 <data
                     android:host="@string/hostName"
                     android:scheme="https" />
+            </intent-filter>
+
+            <intent-filter>
+                <action android:name="android.intent.action.VIEW" />
+
+                <category android:name="android.intent.category.DEFAULT" />
+
+                <data
+                    android:mimeType="text/calendar"
+                    android:scheme="content" />
+            </intent-filter>
+
+            <intent-filter>
+                <action android:name="android.intent.action.VIEW" />
+
+                <category android:name="android.intent.category.DEFAULT" />
+                <category android:name="android.intent.category.BROWSABLE" />
+
+                <data android:scheme="web+vibetype" />
             </intent-filter>
         </activity>
 
