@@ -1,3 +1,9 @@
+## [0.6.1](https://github.com/maevsi/android/compare/0.6.0...0.6.1) (2026-11-16)
+
+### Bug Fixes
+
+* **shortcut:** open the events shortcut in the user's language ([#77](https://github.com/maevsi/android/issues/77)) ([af7e683](https://github.com/maevsi/android/commit/af7e6833b9b95bf3fc0508b83d5ba4bb4aa5294f))
+
 ## [0.6.0](https://github.com/maevsi/android/compare/0.5.1...0.6.0) (2026-11-16)
 
 ### Features
