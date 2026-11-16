@@ -68,11 +68,13 @@ object TwaManifest {
     // - short_name: Shorter string used if |name| is too long.
     // - url: Absolute path of the URL to launch the app with (e.g "/create").
     // - icon: Name of the resource in the drawable folder to use as an icon.
+    // The names are translated by index in `res/values-<language>/strings.xml`.
     val shortcuts = arrayOf<Shortcut>(
         object : Shortcut {
             override val name = "Explore events"
             override val shortName = "Events"
-            override val url = "$protocol$hostName/event"
+            // An unprefixed url is English, so the mark lets the site pick the user's language.
+            override val url = "$protocol$hostName/event?language=auto"
             override val icon = "shortcut_explore"
         },
     )
