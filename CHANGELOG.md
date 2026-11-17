@@ -1,3 +1,9 @@
+## [0.6.2](https://github.com/maevsi/android/compare/0.6.1...0.6.2) (2026-11-17)
+
+### Bug Fixes
+
+* **notification:** keep the permission requestable from the web app ([#79](https://github.com/maevsi/android/issues/79)) ([36b4b8a](https://github.com/maevsi/android/commit/36b4b8aa1e8aa34fd718668d7a543f5786828bed))
+
 ## [0.6.1](https://github.com/maevsi/android/compare/0.6.0...0.6.1) (2026-11-16)
 
 ### Bug Fixes
