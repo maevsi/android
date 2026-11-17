@@ -26,7 +26,8 @@ env:
 jobs:
   notes:
     name: Collect the release notes
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-26.04
+    timeout-minutes: 10
     # Runs before the approval for production, so that the approver can read the notes first.
     environment: internal
     permissions:
@@ -40,6 +41,7 @@ jobs:
     - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
       with:
         fetch-depth: 0
+        persist-credentials: false
     - name: Check out the release
       id: tag
       env:
@@ -109,7 +111,8 @@ jobs:
     name: Promote the internal release to production
     needs: notes
     if: needs.notes.outputs.notes-en != ''
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-26.04
+    timeout-minutes: 20
     environment: production
     # A newer release replaces one that still waits for approval, since its notes include the older ones.
     concurrency:
@@ -121,6 +124,7 @@ jobs:
     steps:
     - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
       with:
+        persist-credentials: false
         ref: refs/tags/${{ needs.notes.outputs.tag }}
     - name: Set up JDK
       uses: actions/setup-java@d1374f8ac74474200d16ef8ecee22c7ae7a51880 # v6.3.0
