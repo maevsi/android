@@ -3,27 +3,125 @@ name: Promote
 permissions: {}
 
 on:
+  workflow_call:
+    inputs:
+      tag:
+        description: The release to promote, which must be the latest release on the internal track
+        required: true
+        type: string
   workflow_dispatch:
     inputs:
       release-notes-de:
-        description: German release notes, at most 500 characters
-        required: true
+        description: German release notes replacing the collected ones, at most 500 characters
+        required: false
         type: string
       release-notes-en:
-        description: English release notes, at most 500 characters
-        required: true
+        description: English release notes replacing the collected ones, at most 500 characters
+        required: false
         type: string
 
+env:
+  PACKAGE_NAME: si.maev.twa
+
 jobs:
+  notes:
+    name: Collect the release notes
+    runs-on: ubuntu-latest
+    # Runs before the approval for production, so that the approver can read the notes first.
+    environment: internal
+    permissions:
+      contents: read
+      id-token: write
+    outputs:
+      notes-de: ${{ steps.notes.outputs.notes-de }}
+      notes-en: ${{ steps.notes.outputs.notes-en }}
+      tag: ${{ steps.tag.outputs.tag }}
+    steps:
+    - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+      with:
+        fetch-depth: 0
+    - name: Check out the release
+      id: tag
+      env:
+        TAG: ${{ inputs.tag }}
+      run: |
+        if [ -z "$TAG" ]; then
+          TAG=$(git describe --tags --abbrev=0 --exclude '*-*')
+        fi
+        git checkout -q "refs/tags/$TAG"
+        echo "tag=$TAG" >> "$GITHUB_OUTPUT"
+    - name: Authenticate to Google Cloud
+      id: auth
+      uses: google-github-actions/auth@7c6bc770dae815cd3e89ee6cdf493a5fab2cc093 # v3
+      with:
+        workload_identity_provider: ${{ vars.GCP_WORKLOAD_IDENTITY_PROVIDER }}
+        service_account: ${{ vars.GCP_PUBLISHER_SERVICE_ACCOUNT }}
+        token_format: access_token
+        access_token_scopes: https://www.googleapis.com/auth/androidpublisher
+    - name: Collect the release notes since the release in production
+      id: notes
+      env:
+        ACCESS_TOKEN: ${{ steps.auth.outputs.access_token }}
+        RELEASE_NOTES_DE: ${{ inputs.release-notes-de }}
+        RELEASE_NOTES_EN: ${{ inputs.release-notes-en }}
+        TAG: ${{ steps.tag.outputs.tag }}
+      run: |
+        internal=$(.github/scripts/play-notes.sh version internal)
+        if [ "$internal" != "$TAG" ]; then
+          echo "::error::The internal track holds $internal, not $TAG."
+          exit 1
+        fi
+        production=$(.github/scripts/play-notes.sh version production)
+        .github/scripts/play-notes.sh write "$production" "$TAG"
+        notes=app/src/main/play/release-notes
+        if [ ! -f "$notes/en-US/default.txt" ]; then
+          if [ "$GITHUB_EVENT_NAME" = workflow_dispatch ]; then
+            echo "::error::No release since $production added release notes, so pass them to this workflow."
+            exit 1
+          fi
+          echo "::notice::No release since $production added release notes, so $TAG stays on the internal track until a later release does."
+          exit 0
+        fi
+        {
+          echo "notes-de<<NOTES_END"
+          cat "$notes/de-DE/default.txt"
+          echo
+          echo NOTES_END
+          echo "notes-en<<NOTES_END"
+          cat "$notes/en-US/default.txt"
+          echo
+          echo NOTES_END
+        } >> "$GITHUB_OUTPUT"
+        {
+          echo "## Release notes for $TAG, replacing $production in production"
+          echo
+          echo '### de-DE'
+          echo
+          cat "$notes/de-DE/default.txt"
+          echo
+          echo
+          echo '### en-US'
+          echo
+          cat "$notes/en-US/default.txt"
+          echo
+        } >> "$GITHUB_STEP_SUMMARY"
   promote:
     name: Promote the internal release to production
+    needs: notes
+    if: needs.notes.outputs.notes-en != ''
     runs-on: ubuntu-latest
     environment: production
+    # A newer release replaces one that still waits for approval, since its notes include the older ones.
+    concurrency:
+      group: promote
+      cancel-in-progress: true
     permissions:
       contents: read
       id-token: write
     steps:
     - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+      with:
+        ref: refs/tags/${{ needs.notes.outputs.tag }}
     - name: Set up JDK
       uses: actions/setup-java@d1374f8ac74474200d16ef8ecee22c7ae7a51880 # v6.3.0
       with:
@@ -32,25 +130,30 @@ jobs:
         java-version: 25.0.5+8.0.LTS
     - name: Write the release notes
       env:
-        # ${#2} below counts bytes in the C locale, which would reject German notes under 500 characters.
-        LC_ALL: C.UTF-8
-        RELEASE_NOTES_DE: ${{ inputs.release-notes-de }}
-        RELEASE_NOTES_EN: ${{ inputs.release-notes-en }}
+        NOTES_DE: ${{ needs.notes.outputs.notes-de }}
+        NOTES_EN: ${{ needs.notes.outputs.notes-en }}
       run: |
-        write_notes() {
-          if [ -z "$2" ] || [ "${#2}" -gt 500 ]; then
-            echo "::error::The $1 release notes must hold 1 to 500 characters."
-            exit 1
-          fi
-          mkdir -p "app/src/main/play/release-notes/$1"
-          printf '%s' "$2" > "app/src/main/play/release-notes/$1/default.txt"
-        }
-        write_notes de-DE "$RELEASE_NOTES_DE"
-        write_notes en-US "$RELEASE_NOTES_EN"
+        mkdir -p app/src/main/play/release-notes/de-DE app/src/main/play/release-notes/en-US
+        printf '%s' "$NOTES_DE" > app/src/main/play/release-notes/de-DE/default.txt
+        printf '%s' "$NOTES_EN" > app/src/main/play/release-notes/en-US/default.txt
     - name: Authenticate to Google Cloud
+      id: auth
       uses: google-github-actions/auth@7c6bc770dae815cd3e89ee6cdf493a5fab2cc093 # v3
       with:
         workload_identity_provider: ${{ vars.GCP_WORKLOAD_IDENTITY_PROVIDER }}
         service_account: ${{ vars.GCP_PUBLISHER_SERVICE_ACCOUNT }}
+        token_format: access_token
+        access_token_scopes: https://www.googleapis.com/auth/androidpublisher
+    - name: Check that the internal track still holds the release
+      env:
+        ACCESS_TOKEN: ${{ steps.auth.outputs.access_token }}
+        TAG: ${{ needs.notes.outputs.tag }}
+      run: |
+        # Gradle Play Publisher promotes whatever is latest on the internal track, not a given version.
+        internal=$(.github/scripts/play-notes.sh version internal)
+        if [ "$internal" != "$TAG" ]; then
+          echo "::error::The internal track holds $internal by now, not $TAG."
+          exit 1
+        fi
     - name: Promote the latest internal release to production
       run: ./gradlew promoteReleaseArtifact --from-track internal --promote-track production

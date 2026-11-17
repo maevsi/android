@@ -26,21 +26,35 @@ The plugin asks Google Play for the highest `versionCode` in use and publishes w
 Pushes to `beta` and `alpha` create prereleases on GitHub only, since CI publishes to Google Play from `main` alone.
 
 Publishing authenticates with [Workload Identity Federation](https://cloud.google.com/iam/docs/workload-identity-federation), so CI holds no Google service account key.
-The upload and promote jobs get a short-lived GitHub OIDC token, which Google exchanges for access to the service account.
+Every job that talks to Google Play gets a short-lived GitHub OIDC token, which Google exchanges for access to the service account.
+
+### Release notes
+
+Every pull request that triggers a release, so every `feat`, `fix`, or `perf`, adds release notes for Google Play.
+They live in `play-notes/<slug>/de-DE.txt` and `play-notes/<slug>/en-US.txt`, one sentence of at most 150 characters per file, written for people who use the app.
+The Play notes workflow fails a pull request that triggers a release without adding them, unless it carries the `no-play-notes` label or comes from Renovate.
+It also checks every fragment the pull request touches.
+The fragments stay in the repository, so they double as a history of what users were told.
 
 ### Promoting a release
 
 The upload stops at the internal track, so testers there get each release first.
-To release to users, run the Promote workflow from `main`, either in the Actions tab or with the command below.
-It needs German and English release notes of at most 500 characters each.
-The workflow promotes the latest release on the internal track to production with those notes.
-The notes are not stored in the repository.
+After the upload, CI calls the Promote workflow, which asks Google Play which version is in production and collects the fragments added since then, one bullet each.
+It shows the collected notes in the run's summary, so read them there before you approve the deployment to the `production` environment.
+After the approval, it promotes the latest release on the internal track to production with those notes.
+A release that adds no fragments stays on the internal track, and the next release that adds some takes it along.
+A newer release cancels a promotion that still waits for approval, since its notes include the older ones.
+
+Google Play allows 500 characters per language, and the workflow fails when the collected notes exceed that.
+Then, or to promote a release without fragments, run the Promote workflow from `main` and pass your own notes, which replace the collected ones:
 
 ```sh
 gh workflow run promote.yml --repo maevsi/android --ref main \
-  -f release-notes-de="Fehlerbehebungen und Verbesserungen" \
-  -f release-notes-en="Bug fixes and improvements"
+  -f release-notes-de="• Der Startbildschirm passt jetzt zum hellen Design." \
+  -f release-notes-en="• The start screen now matches the light design."
 ```
+
+Run `.github/scripts/play-notes.test.sh` after changing `.github/scripts/play-notes.sh`.
 
 ## Secrets and variables
 
@@ -51,7 +65,7 @@ The upload job needs these repository secrets:
 - `UPLOAD_KEY_PASSWORD`: the password of the key
 - `PERSONAL_ACCESS_TOKEN`: the token semantic-release uses to push the release commit and create releases, which must belong to an account that may bypass the branch ruleset on `main` and `beta`
 
-It also needs these repository variables, which are identifiers and not secrets, and the promote job needs only these two:
+It also needs these repository variables, which are identifiers and not secrets, and the Promote workflow needs only these two:
 
 - `GCP_WORKLOAD_IDENTITY_PROVIDER`: the full resource name of the workload identity provider
 - `GCP_PUBLISHER_SERVICE_ACCOUNT`: the email of the service account that publishes
@@ -80,7 +94,16 @@ for environment in internal production; do
 done
 ```
 
-If a second person should approve each promotion, add required reviewers to `production` in the repository settings.
+Then make every promotion wait for your approval:
+
+```sh
+gh api -X PUT repos/maevsi/android/environments/production \
+  -F 'deployment_branch_policy[protected_branches]=false' \
+  -F 'deployment_branch_policy[custom_branch_policies]=true' \
+  -F 'reviewers[][type]=User' -F "reviewers[][id]=$(gh api user --jq .id)"
+```
+
+Without reviewers, CI promotes every release that adds release notes to production on its own.
 
 ### Setting up Workload Identity Federation
 
