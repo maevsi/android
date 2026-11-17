@@ -52,8 +52,9 @@ object TwaManifest {
         "/?source=pwa" // The start path for the TWA. Must be relative to the domain.
     val name = "Vibetype" // The application name.
     val launcherName = "Vibetype" // The name shown on the Android Launcher.
+    // Copies of the `--surface` tokens in maevsi/vibetype's `src/app/assets/css/vibetype.css`, update both together.
     val themeColor = "#ffffff" // The color used for the status bar.
-    val themeColorDark = "#191911" // The color used for the dark status bar.
+    val themeColorDark = "#121312" // The color used for the dark status bar.
     val navigationColor = themeColor // The color used for the navigation bar.
     val navigationColorDark = themeColorDark // The color used for the dark navbar.
     val navigationDividerColor = themeColor // The navbar divider color.
