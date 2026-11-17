@@ -1,3 +1,9 @@
+## [0.6.3](https://github.com/maevsi/android/compare/0.6.2...0.6.3) (2026-11-17)
+
+### Bug Fixes
+
+* **ui:** match the dark theme color to the web app's surface ([#80](https://github.com/maevsi/android/issues/80)) ([46cf171](https://github.com/maevsi/android/commit/46cf17185abf7581901b3792b4284b9735c64213))
+
 ## [0.6.2](https://github.com/maevsi/android/compare/0.6.1...0.6.2) (2026-11-17)
 
 ### Bug Fixes

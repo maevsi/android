@@ -121,7 +121,7 @@ android {
         targetSdk = 36
         // Only local builds keep this value. The `play` block below replaces it on publish.
         versionCode = 1
-        versionName = "0.6.2"
+        versionName = "0.6.3"
 
         // The name for the application
         resValue("string", "appName", TwaManifest.name)
