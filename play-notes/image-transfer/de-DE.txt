@@ -1,0 +1,1 @@
+Der Startbildschirm bleibt wieder sichtbar, bis die App geladen ist, statt einer leeren Seite.
