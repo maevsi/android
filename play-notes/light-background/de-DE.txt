@@ -1,0 +1,1 @@
+Beim Öffnen zeigt die App jetzt einen hellen Hintergrund, passend zur Web-App.
