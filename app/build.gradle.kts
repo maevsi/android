@@ -58,7 +58,7 @@ object TwaManifest {
     val navigationColorDark = themeColorDark // The color used for the dark navbar.
     val navigationDividerColor = themeColor // The navbar divider color.
     val navigationDividerColorDark = themeColorDark // The dark navbar divider color.
-    val backgroundColor = themeColorDark // The color used for the splash screen background.
+    val backgroundColor = themeColor // The color used for the splash screen background.
     val startChromeBeforeAnimationComplete =
         true // Set to true to start chrome before the splash screen animation is complete.
     val enableNotifications = true // Set to true to enable notification delegation.
