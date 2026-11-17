@@ -1,0 +1,1 @@
+In dark mode, the bars at the top and bottom now match the app's colors.
