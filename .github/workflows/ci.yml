@@ -82,3 +82,12 @@ jobs:
           -Pandroid.injected.signing.store.password="$UPLOAD_KEYSTORE_PASSWORD" \
           -Pandroid.injected.signing.key.alias=upload \
           -Pandroid.injected.signing.key.password="$UPLOAD_KEY_PASSWORD"
+  promote:
+    needs: [release_semantic, release]
+    name: Promote to production
+    uses: ./.github/workflows/promote.yml
+    permissions:
+      contents: read
+      id-token: write
+    with:
+      tag: ${{ needs.release_semantic.outputs.new_release_version }}

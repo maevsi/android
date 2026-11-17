@@ -1,0 +1,29 @@
+name: Play notes
+
+permissions: {}
+
+on:
+  pull_request:
+    # The check depends on the title and the labels too, not only on the commits.
+    types: [opened, synchronize, reopened, edited, labeled, unlabeled]
+
+jobs:
+  play-notes:
+    name: Check the Google Play release notes
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+    steps:
+    - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+      with:
+        fetch-depth: 0
+    - name: Test the release notes script
+      run: .github/scripts/play-notes.test.sh
+    - name: Check the release notes of this pull request
+      env:
+        AUTHOR: ${{ github.event.pull_request.user.login }}
+        BASE: ${{ github.event.pull_request.base.sha }}
+        HEAD: ${{ github.event.pull_request.head.sha }}
+        SKIP: ${{ contains(github.event.pull_request.labels.*.name, 'no-play-notes') }}
+        TITLE: ${{ github.event.pull_request.title }}
+      run: .github/scripts/play-notes.sh pr
