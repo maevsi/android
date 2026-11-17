@@ -269,7 +269,7 @@ play {
     useApplicationDefaultCredentials.set(true)
     defaultToAppBundles.set(true)
     resolutionStrategy.set(ResolutionStrategy.AUTO)
-    track.set("production")
+    track.set("internal")
 }
 
 dependencies {

@@ -49,8 +49,9 @@ jobs:
   release:
     needs: release_semantic
     if: github.ref_name == 'main' && needs.release_semantic.outputs.new_release_version != null
-    name: Sign and release to Google Play
+    name: Sign and upload to Google Play's internal track
     runs-on: ubuntu-latest
+    environment: internal
     permissions:
       contents: read
       id-token: write
@@ -69,7 +70,7 @@ jobs:
       with:
         workload_identity_provider: ${{ vars.GCP_WORKLOAD_IDENTITY_PROVIDER }}
         service_account: ${{ vars.GCP_PUBLISHER_SERVICE_ACCOUNT }}
-    - name: Build, sign, and publish the release bundle to Google Play
+    - name: Build, sign, and upload the release bundle to the internal track
       env:
         UPLOAD_KEY_PASSWORD: ${{ secrets.UPLOAD_KEY_PASSWORD }}
         UPLOAD_KEYSTORE_BASE64: ${{ secrets.UPLOAD_KEYSTORE_BASE64 }}
