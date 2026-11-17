@@ -1,3 +1,9 @@
+## [0.6.4](https://github.com/maevsi/android/compare/0.6.3...0.6.4) (2026-11-17)
+
+### Bug Fixes
+
+* **splash:** follow the system theme ([#81](https://github.com/maevsi/android/issues/81)) ([682cdd0](https://github.com/maevsi/android/commit/682cdd07c961067c884aec8e980f3949ef56a050))
+
 ## [0.6.3](https://github.com/maevsi/android/compare/0.6.2...0.6.3) (2026-11-17)
 
 ### Bug Fixes
