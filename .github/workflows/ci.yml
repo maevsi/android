@@ -11,6 +11,11 @@ on:
       - main
       - renovate/**
 
+# Release branches queue instead of being cancelled, so a release never stops halfway.
+concurrency:
+  group: ci-${{ github.ref }}
+  cancel-in-progress: ${{ !contains(fromJSON('["refs/heads/alpha", "refs/heads/beta", "refs/heads/main"]'), github.ref) }}
+
 jobs:
   ci-optimization:
     name: CI optimization
@@ -20,11 +25,14 @@ jobs:
   build:
     needs: ci-optimization
     if: needs.ci-optimization.outputs.continue == 'true'
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-26.04
+    timeout-minutes: 15
     permissions:
       contents: read
     steps:
     - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+      with:
+        persist-credentials: false
     - name: Set up JDK
       uses: actions/setup-java@d1374f8ac74474200d16ef8ecee22c7ae7a51880 # v6.3.0
       with:
@@ -50,7 +58,8 @@ jobs:
     needs: release_semantic
     if: github.ref_name == 'main' && needs.release_semantic.outputs.new_release_version != null
     name: Sign and upload to Google Play's internal track
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-26.04
+    timeout-minutes: 15
     environment: internal
     permissions:
       contents: read
@@ -58,6 +67,7 @@ jobs:
     steps:
     - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
       with:
+        persist-credentials: false
         ref: ${{ needs.release_semantic.outputs.new_release_version }}
     - name: Set up JDK
       uses: actions/setup-java@d1374f8ac74474200d16ef8ecee22c7ae7a51880 # v6.3.0
