@@ -32,6 +32,8 @@ jobs:
         java-version: 25.0.5+8.0.LTS
     - name: Write the release notes
       env:
+        # ${#2} below counts bytes in the C locale, which would reject German notes under 500 characters.
+        LC_ALL: C.UTF-8
         RELEASE_NOTES_DE: ${{ inputs.release-notes-de }}
         RELEASE_NOTES_EN: ${{ inputs.release-notes-en }}
       run: |
@@ -41,7 +43,7 @@ jobs:
             exit 1
           fi
           mkdir -p "app/src/main/play/release-notes/$1"
-          printf '%s\n' "$2" > "app/src/main/play/release-notes/$1/default.txt"
+          printf '%s' "$2" > "app/src/main/play/release-notes/$1/default.txt"
         }
         write_notes de-DE "$RELEASE_NOTES_DE"
         write_notes en-US "$RELEASE_NOTES_EN"
