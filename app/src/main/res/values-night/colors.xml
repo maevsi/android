@@ -1,0 +1,5 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- splash screen background, mirrors TwaManifest.themeColorDark in app/build.gradle.kts -->
+    <color name="backgroundColor">#191911</color>
+</resources>
