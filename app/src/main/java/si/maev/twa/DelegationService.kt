@@ -48,8 +48,8 @@ class DelegationService : com.google.androidbrowserhelper.trusted.DelegationServ
         return result
     }
 
-    override fun onAreNotificationsEnabled(channelName: String) =
-        areNotificationsEnabled(channelName)
+    // The browser stores "block" when this is `false` while it shows a notification, and then needs a restart to notice that the user enabled notifications again; `onNotifyNotificationWithChannel` drops the notification instead.
+    override fun onAreNotificationsEnabled(channelName: String) = true
 
     override fun onNotifyNotificationWithChannel(
         platformTag: String, platformId: Int, notification: Notification, channelName: String
@@ -59,7 +59,7 @@ class DelegationService : com.google.androidbrowserhelper.trusted.DelegationServ
         var notificationBuilt = notification
 
         // The browser treats `true` as "shown", so a blocked notification must report `false`.
-        if (!mNotificationManager.areNotificationsEnabled()) return false
+        if (!areNotificationsEnabled(channelName)) return false
 
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
             val builder: Notification.Builder =

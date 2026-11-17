@@ -9,6 +9,7 @@ import android.os.Build
 import android.os.Bundle
 import android.os.Message
 import android.os.Messenger
+import android.os.RemoteException
 import android.provider.Settings
 
 const val EXTRA_NOTIFICATION_CHANNEL_NAME = "notificationChannelName"
@@ -92,11 +93,15 @@ class NotificationPermissionActivity : Activity() {
 
     override fun finish() {
         // The browser leaves the web app's request pending until this message arrives.
-        messenger?.send(Message.obtain().apply {
-            data = Bundle().apply {
-                putInt(KEY_PERMISSION_STATUS, notificationPermissionStatus(channelName))
-            }
-        })
+        try {
+            messenger?.send(Message.obtain().apply {
+                data = Bundle().apply {
+                    putInt(KEY_PERMISSION_STATUS, notificationPermissionStatus(channelName))
+                }
+            })
+        } catch (_: RemoteException) {
+            // The browser is gone and reads the status again when it starts.
+        }
         messenger = null
         super.finish()
     }
