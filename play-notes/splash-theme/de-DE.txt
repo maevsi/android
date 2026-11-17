@@ -1,0 +1,1 @@
+Beim Öffnen passt sich der Hintergrund jetzt dem hellen oder dunklen Design des Geräts an.

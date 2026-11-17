@@ -58,7 +58,6 @@ object TwaManifest {
     val navigationColorDark = themeColorDark // The color used for the dark navbar.
     val navigationDividerColor = themeColor // The navbar divider color.
     val navigationDividerColorDark = themeColorDark // The dark navbar divider color.
-    val backgroundColor = themeColor // The color used for the splash screen background.
     val startChromeBeforeAnimationComplete =
         true // Set to true to start chrome before the splash screen animation is complete.
     val enableNotifications = true // Set to true to enable notification delegation.
@@ -181,10 +180,6 @@ android {
         // set here or in `res/values/colors.xml`. Setting in both places is an error and the
         //app will not compile. If not set, the divider color defaults to #000000 - black.
         resValue("color", "navigationDividerColorDark", TwaManifest.navigationDividerColorDark)
-
-        // Sets the color for the background used for the splash screen when launching the
-        // Trusted Web Activity.
-        resValue("color", "backgroundColor", TwaManifest.backgroundColor)
 
         // Defines a provider authority for the Splash Screen
         resValue("string", "providerAuthority", TwaManifest.applicationId + ".fileprovider")
