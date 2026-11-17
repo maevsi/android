@@ -1,3 +1,9 @@
+## [0.6.5](https://github.com/maevsi/android/compare/0.6.4...0.6.5) (2026-11-17)
+
+### Bug Fixes
+
+* **splash:** keep the splash screen until the page loads ([#84](https://github.com/maevsi/android/issues/84)) ([dc3bb22](https://github.com/maevsi/android/commit/dc3bb223812e3a629764daa1f32f74ada795dfa4))
+
 ## [0.6.4](https://github.com/maevsi/android/compare/0.6.3...0.6.4) (2026-11-17)
 
 ### Bug Fixes
