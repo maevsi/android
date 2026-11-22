@@ -5,13 +5,15 @@
     android:background="@color/backgroundColor"
     android:fitsSystemWindows="true"
     android:gravity="center"
-    android:orientation="vertical"
-    android:padding="24dp">
+    android:orientation="vertical">
 
+    <!-- margins instead of padding on the root, as fitsSystemWindows replaces that padding with the system bar insets -->
     <TextView
         android:id="@+id/offlineMessage"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_marginStart="24dp"
+        android:layout_marginEnd="24dp"
         android:gravity="center"
         android:text="@string/offlineMessage"
         android:textColor="@color/offlineTextColor"
@@ -22,7 +24,11 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="24dp"
+        android:background="@drawable/offline_retry_button"
         android:minHeight="48dp"
+        android:paddingStart="32dp"
+        android:paddingEnd="32dp"
         android:text="@string/offlineRetry"
+        android:textColor="#ffffff"
         android:textSize="16sp" />
 </LinearLayout>

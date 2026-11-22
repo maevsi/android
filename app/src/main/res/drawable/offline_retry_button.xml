@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- mirrors the web app's action-primary and action-primary-hover colors -->
+<ripple xmlns:android="http://schemas.android.com/apk/res/android"
+    android:color="#117a23">
+    <item>
+        <shape android:shape="rectangle">
+            <corners android:radius="16dp" />
+            <solid android:color="#15852a" />
+        </shape>
+    </item>
+</ripple>
