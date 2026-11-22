@@ -44,4 +44,18 @@
         }
     }]
   </string>
+
+  <string name="shareTargetPoster" translatable="false">
+    {
+        \"action\": \"https://vibetype.app/event/ingest/share\",
+        \"method\": \"POST\",
+        \"enctype\": \"multipart/form-data\",
+        \"params\": {
+            \"files\": [{
+                \"name\": \"poster\",
+                \"accept\": [\"image/jpeg\", \"image/png\"]
+            }]
+        }
+    }
+  </string>
 </resources>

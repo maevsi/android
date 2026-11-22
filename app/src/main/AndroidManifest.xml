@@ -139,6 +139,10 @@
                 android:name="android.support.customtabs.trusted.DISPLAY_OVERRIDE"
                 android:resource="@array/display_override" />
 
+            <meta-data
+                android:name="android.support.customtabs.trusted.METADATA_SHARE_TARGET"
+                android:resource="@string/shareTargetPoster" />
+
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
                 <category android:name="android.intent.category.LAUNCHER" />
@@ -172,6 +176,15 @@
                 <category android:name="android.intent.category.BROWSABLE" />
 
                 <data android:scheme="web+vibetype" />
+            </intent-filter>
+
+            <intent-filter>
+                <action android:name="android.intent.action.SEND" />
+
+                <category android:name="android.intent.category.DEFAULT" />
+
+                <data android:mimeType="image/jpeg" />
+                <data android:mimeType="image/png" />
             </intent-filter>
         </activity>
 
