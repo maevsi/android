@@ -1,3 +1,9 @@
+## [0.7.0](https://github.com/maevsi/android/compare/0.6.5...0.7.0) (2026-11-22)
+
+### Features
+
+* **share:** receive posters from other apps ([#88](https://github.com/maevsi/android/issues/88)) ([0aa2ff4](https://github.com/maevsi/android/commit/0aa2ff45b2170a20f36054366943f09cde873e99))
+
 ## [0.6.5](https://github.com/maevsi/android/compare/0.6.4...0.6.5) (2026-11-17)
 
 ### Bug Fixes
