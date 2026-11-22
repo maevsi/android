@@ -58,4 +58,7 @@
         }
     }
   </string>
+
+  <string name="offlineMessage">You\'re offline. Reconnect to the internet, then try again.</string>
+  <string name="offlineRetry">Try again</string>
 </resources>

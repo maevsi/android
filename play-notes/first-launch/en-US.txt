@@ -1,0 +1,1 @@
+When you open the app for the first time without internet, it now shows a hint and lets you try again.
