@@ -72,10 +72,16 @@ class LauncherActivity : com.google.androidbrowserhelper.trusted.LauncherActivit
     private fun hasLoadedBefore() =
         getSharedPreferences(PREFERENCES_NAME, MODE_PRIVATE).getBoolean(KEY_LOADED_BEFORE, false)
 
+    // an always-on VPN such as Tailscale is the active network and reports internet even with nothing underneath it, so only non-VPN networks count
+    @Suppress("DEPRECATION") // `allNetworks` has no synchronous replacement
     private fun isOnline(): Boolean {
         val manager = getSystemService(Context.CONNECTIVITY_SERVICE) as ConnectivityManager
-        val capabilities = manager.getNetworkCapabilities(manager.activeNetwork)
-        return capabilities?.hasCapability(NetworkCapabilities.NET_CAPABILITY_INTERNET) == true
+        return manager.allNetworks.any { network ->
+            manager.getNetworkCapabilities(network)?.run {
+                hasCapability(NetworkCapabilities.NET_CAPABILITY_INTERNET) &&
+                    hasCapability(NetworkCapabilities.NET_CAPABILITY_NOT_VPN)
+            } == true
+        }
     }
 
     override fun createTwaLauncher(): TwaLauncher {
