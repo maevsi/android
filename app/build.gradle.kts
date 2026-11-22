@@ -28,6 +28,11 @@ plugins {
     alias(libs.plugins.play.publisher)
 }
 
+// Without the Firebase config the build still passes, but analytics stays uninitialized and the app instance id is skipped.
+if (file("google-services.json").exists()) {
+    apply(plugin = libs.plugins.google.services.get().pluginId)
+}
+
 val keystorePropertiesFile: File = rootProject.file("keystore.properties")
 val keystoreProperties = Properties()
 
@@ -271,6 +276,8 @@ play {
 dependencies {
     implementation(libs.androidbrowserhelper)
     implementation(libs.androidbrowserhelper.locationdelegation)
+    implementation(platform(libs.firebase.bom))
+    implementation(libs.firebase.analytics)
 }
 
 tasks.register("generateShortcutsFile") {

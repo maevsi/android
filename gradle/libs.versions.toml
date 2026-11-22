@@ -3,11 +3,16 @@ agp = "9.5.1"
 abh = "2.7.4"
 abhLocationDelegation = "1.1.2"
 playPublisher = "4.1.2"
+firebaseBom = "34.19.0"
+googleServices = "4.6.0"
 
 [libraries]
 androidbrowserhelper = { group = "com.google.androidbrowserhelper", name = "androidbrowserhelper", version.ref = "abh" }
 androidbrowserhelper-locationdelegation = { group = "com.google.androidbrowserhelper", name = "locationdelegation", version.ref = "abhLocationDelegation" }
+firebase-bom = { group = "com.google.firebase", name = "firebase-bom", version.ref = "firebaseBom" }
+firebase-analytics = { group = "com.google.firebase", name = "firebase-analytics" }
 
 [plugins]
 android-application = { id = "com.android.application", version.ref = "agp" }
+google-services = { id = "com.google.gms.google-services", version.ref = "googleServices" }
 play-publisher = { id = "com.github.triplet.play", version.ref = "playPublisher" }
