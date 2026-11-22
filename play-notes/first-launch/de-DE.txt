@@ -1,0 +1,1 @@
+Wenn du die App zum ersten Mal ohne Internet öffnest, zeigt sie jetzt einen Hinweis an und lässt dich es erneut versuchen.

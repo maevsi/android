@@ -2,4 +2,6 @@
 <resources xmlns:tools="http://schemas.android.com/tools">
     <!-- The default is generated from the shortcuts in `app/build.gradle.kts`, which lint does not see. -->
     <string name="shortcut_name_0" tools:ignore="ExtraTranslation">Veranstaltungen entdecken</string>
+    <string name="offlineMessage">Du bist offline. Verbinde dich mit dem Internet und versuche es dann erneut.</string>
+    <string name="offlineRetry">Erneut versuchen</string>
 </resources>

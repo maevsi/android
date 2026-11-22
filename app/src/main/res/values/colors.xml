@@ -2,4 +2,5 @@
 <resources>
     <!-- splash screen background, mirrors TwaManifest.themeColor in app/build.gradle.kts -->
     <color name="backgroundColor">#ffffff</color>
+    <color name="offlineTextColor">#000000</color>
 </resources>
