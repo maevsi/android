@@ -1,5 +1,5 @@
 [versions]
-agp = "9.5.1"
+agp = "9.5.2"
 abh = "2.7.4"
 abhLocationDelegation = "1.1.2"
 playPublisher = "4.1.2"
