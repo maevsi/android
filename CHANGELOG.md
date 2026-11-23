@@ -1,3 +1,9 @@
+## [0.8.0](https://github.com/maevsi/android/compare/0.7.0...0.8.0) (2026-11-23)
+
+### Features
+
+* **offline:** show a hint on a first launch without internet ([#87](https://github.com/maevsi/android/issues/87)) ([7f8c7db](https://github.com/maevsi/android/commit/7f8c7db69222ce0dacacae6a3c93018738ee656c))
+
 ## [0.7.0](https://github.com/maevsi/android/compare/0.6.5...0.7.0) (2026-11-22)
 
 ### Features
