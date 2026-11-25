@@ -1,10 +1,12 @@
 package si.maev.twa
 
+import android.Manifest
 import android.app.Notification
 import android.app.NotificationChannel
 import android.app.NotificationManager
 import android.app.PendingIntent
 import android.content.Intent
+import android.content.pm.PackageManager
 import android.os.Build
 import android.os.Bundle
 import androidx.browser.trusted.TrustedWebActivityCallbackRemote
@@ -21,6 +23,12 @@ class DelegationService : com.google.androidbrowserhelper.trusted.DelegationServ
     override fun onExtraCommand(
         commandName: String, args: Bundle, callbackRemote: TrustedWebActivityCallbackRemote?
     ): Bundle? {
+        // Since Android 14 the system blocks the library's `PermissionRequestActivity`, as the browser binds this service without `Context.BIND_ALLOW_ACTIVITY_STARTS`, and the web app's request would then wait forever instead of failing. The browser treats a result without "success" as "block", so users can only allow location in the app's settings. Remove once https://github.com/GoogleChrome/android-browser-helper/issues/499 is fixed.
+        if (commandName == "checkAndroidLocationPermission" &&
+            Build.VERSION.SDK_INT >= Build.VERSION_CODES.UPSIDE_DOWN_CAKE &&
+            checkSelfPermission(Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED
+        ) return Bundle()
+
         val channelName = args.getString(EXTRA_NOTIFICATION_CHANNEL_NAME)
         val result = Bundle()
 
