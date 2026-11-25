@@ -1,3 +1,9 @@
+## [0.8.1](https://github.com/maevsi/android/compare/0.8.0...0.8.1) (2026-11-25)
+
+### Bug Fixes
+
+* **location:** deny instead of hanging when no prompt can show ([#91](https://github.com/maevsi/android/issues/91)) ([964ee5b](https://github.com/maevsi/android/commit/964ee5b0fadfe1dc7d311f039b2d14a2c3f16766))
+
 ## [0.8.0](https://github.com/maevsi/android/compare/0.7.0...0.8.0) (2026-11-23)
 
 ### Features
