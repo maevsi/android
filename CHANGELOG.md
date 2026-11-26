@@ -1,3 +1,9 @@
+## [0.8.2](https://github.com/maevsi/android/compare/0.8.1...0.8.2) (2026-11-26)
+
+### Bug Fixes
+
+* **play-notes:** add notes for the location denial ([b48d366](https://github.com/maevsi/android/commit/b48d366cf626c5a435ccf656fbbdbbd983de478e))
+
 ## [0.8.1](https://github.com/maevsi/android/compare/0.8.0...0.8.1) (2026-11-25)
 
 ### Bug Fixes
