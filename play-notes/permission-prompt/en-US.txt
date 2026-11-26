@@ -1,0 +1,1 @@
+Without location access, the map now shows a hint right away instead of getting stuck while looking for your location.

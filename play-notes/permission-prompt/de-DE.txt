@@ -1,0 +1,1 @@
+Ohne Standortfreigabe zeigt die Karte jetzt sofort einen Hinweis an, statt beim Suchen deines Standorts hängen zu bleiben.
