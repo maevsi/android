@@ -240,6 +240,22 @@
 
         <activity android:name=".NotificationPermissionActivity" />
 
+        <activity
+            android:name=".LocationPermissionActivity"
+            android:excludeFromRecents="true"
+            android:exported="true">
+            <intent-filter>
+                <action android:name="android.intent.action.VIEW" />
+
+                <category android:name="android.intent.category.DEFAULT" />
+                <category android:name="android.intent.category.BROWSABLE" />
+
+                <data
+                    android:host="location-permission"
+                    android:scheme="vibetype" />
+            </intent-filter>
+        </activity>
+
         <activity android:name="com.google.androidbrowserhelper.locationdelegation.PermissionRequestActivity" />
     </application>
 </manifest>
