@@ -1,0 +1,1 @@
+You can now allow the app to use your location right from the map.
