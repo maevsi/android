@@ -1,3 +1,9 @@
+## [0.9.0](https://github.com/maevsi/android/compare/0.8.2...0.9.0) (2026-11-27)
+
+### Features
+
+* **location:** ask for the permission from a link ([#92](https://github.com/maevsi/android/issues/92)) ([626c17d](https://github.com/maevsi/android/commit/626c17de812fd8939fe66253635ac00aecb44426))
+
 ## [0.8.2](https://github.com/maevsi/android/compare/0.8.1...0.8.2) (2026-11-26)
 
 ### Bug Fixes
